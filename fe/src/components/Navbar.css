@@ -1,0 +1,88 @@
+.navbar {
+  background-color: #ffffff; /* White background */
+  border-bottom: 1px solid #e8ded1; /* Soft bottom border matching login theme */
+  padding: 0.5rem 3rem; /* Good padding */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Left Side: Logo */
+.navbar-logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #3b2f2f; /* Dark text color */
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
+/* Right Side: Links and User */
+.navbar-right {
+  margin-right: 5%;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-link {
+  color: #786d5b; /* Subdued link color */
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  transition: color 0.2s, border-bottom 0.2s;
+}
+
+.nav-link:hover {
+  color: #c9a97f; /* Hover color */
+}
+
+/* Active NavLink Style */
+.nav-link.active {
+  color: #a18058; /* Active color */
+  border-bottom: 2px solid #a18058;
+}
+
+.nav-item {
+  color: #4f412d;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-item:hover {
+  color: #d8b892;
+}
+
+/* User Display */
+.user-profile {
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #f9f5f0; /* Light background for the user area */
+  border-radius: 20px;
+  font-weight: 600;
+  color: #3b2f2f;
+}
+
+.username-display {
+  font-size: 1rem;
+}
+
+/* Media Query for smaller screens */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem 1.5rem;
+  }
+  .navbar-right {
+    gap: 1rem;
+  }
+  .nav-link {
+    font-size: 0.9rem;
+  }
+  .user-profile {
+    display: none; /* Hide username on very small screens to save space */
+  }
+}

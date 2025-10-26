@@ -79,7 +79,6 @@ body {
   margin-top: 20px;
   font-size: 34px;
   background: linear-gradient(90deg, #777575, #272719);
-  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

@@ -1,0 +1,62 @@
+.my-reflections {
+  padding: 100px 40px 40px;
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.reflections-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.calendar-section {
+  display: flex;
+  justify-content: center;
+}
+
+.reflection-details {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.reflection-card {
+  text-align: left;
+}
+
+.reflection-card h3 {
+  color: #007bff;
+  margin-bottom: 10px;
+}
+
+.reflection-card p {
+  line-height: 1.5;
+  color: #333;
+}
+
+.reflection-card.empty {
+  color: #777;
+}
+
+.reflection-placeholder {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .reflections-layout {
+    grid-template-columns: 1fr;
+  }
+}

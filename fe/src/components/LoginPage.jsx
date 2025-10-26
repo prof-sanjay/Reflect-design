@@ -1,11 +1,24 @@
 import React, { useState } from "react";
 import "./LoginPage.css";
 
+// The component receives 'onLogin' to notify the parent (App.jsx) upon success
 const LoginPage = ({ onLogin }) => {
   const [isSignup, setIsSignup] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const resetFields = () => {
+    setUsername("");
+    setPassword("");
+    setConfirmPassword("");
+  };
+
+  // Function to switch between Login and Signup modes
+  const handleToggle = (shouldSignup) => {
+    setIsSignup(shouldSignup);
+    resetFields(); // Clear fields when toggling
+  };
 
   // ✅ Handle Login
   const handleLogin = (e) => {
@@ -19,6 +32,7 @@ const LoginPage = ({ onLogin }) => {
 
     if (savedUser.username === username && savedUser.password === password) {
       alert("Login Successful!");
+      // Pass the user data up to the parent App component
       if (onLogin) onLogin(savedUser);
     } else {
       alert("Invalid username or password!");
@@ -29,7 +43,7 @@ const LoginPage = ({ onLogin }) => {
   const handleSignup = (e) => {
     e.preventDefault();
 
-    if (!username || !password || !confirmPassword) {
+    if (!username || !password) {
       alert("Please fill all fields!");
       return;
     }
@@ -40,14 +54,11 @@ const LoginPage = ({ onLogin }) => {
 
     const newUser = { username, password };
     localStorage.setItem("reflectUser", JSON.stringify(newUser));
-    alert("Signup Successful! Please login now.");
-    setIsSignup(false);
-    setUsername("");
-    setPassword("");
-    setConfirmPassword("");
+    handleToggle(false); // Switch to Login mode after successful signup
   };
 
   return (
+    <div className="login-page-wrapper"> {/* Changed to avoid conflict with flex logic */}
       <div className="login-container">
         {/* Left Section */}
         <div className="login-left">
@@ -101,33 +112,22 @@ const LoginPage = ({ onLogin }) => {
             </form>
 
             <div className="links">
-              {isSignup ? (
-                <p>
-                  Already have an account?{" "}
-                  <button
-                    className="toggle-btn"
-                    onClick={() => setIsSignup(false)}
-                  >
-                    Login
-                  </button>
-                </p>
-              ) : (
-                <p>
-                  New User?{" "}
-                  <button
-                    className="toggle-btn"
-                    onClick={() => setIsSignup(true)}
-                  >
-                    Signup
-                  </button>
-                </p>
-              )}
+              <p>
+                {isSignup ? "Already have an account?" : "New User?"}{" "}
+                <button
+                  className="toggle-btn"
+                  type="button" // 👈 CRITICAL FIX: prevents form submission
+                  onClick={() => handleToggle(!isSignup)}
+                >
+                  {isSignup ? "Login" : "Signup"}
+                </button>
+              </p>
             </div>
           </div>
         </div>
       </div>
+    </div>
   );
-
 };
 
 export default LoginPage;
