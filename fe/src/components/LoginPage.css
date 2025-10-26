@@ -1,0 +1,162 @@
+/* Global styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #f5efe6; /* soft beige */
+  overflow: hidden; /* prevent scrolling */
+  place-content: center;
+}
+
+/* Main container */
+.login-container {
+  display: flex;
+  height: 90vh;
+  width: 90%;
+}
+
+/* Left section */
+.login-left {
+  flex: 1;
+  background: linear-gradient(135deg, #f9f5f0, #e8ded1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #4a3f35;
+  padding: 2rem;
+}
+
+.brand-name {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  margin-bottom: 1rem;
+  color: #3b2f2f;
+}
+
+.welcome-section h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-section p {
+  font-size: 1rem;
+  color: #6d5f53;
+  text-align: center;
+  max-width: 300px;
+}
+
+/* Right section */
+.login-right {
+  flex: 1;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  width: 85%;
+  max-width: 380px;
+  background-color: #fffaf3;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.login-box h2 {
+  color: #3b2f2f;
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+}
+
+.login-subtitle {
+  color: #786d5b;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Form inputs */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+input {
+  padding: 0.8rem 1rem;
+  border: 1px solid #d8cdbf;
+  border-radius: 12px;
+  background-color: #fff;
+  color: #3b2f2f;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: #c2a97e;
+  box-shadow: 0 0 5px rgba(194, 169, 126, 0.4);
+}
+
+/* Buttons */
+.login-btn {
+  background-color: #d8b892;
+  color: #3b2f2f;
+  border: none;
+  border-radius: 15px;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.login-btn:hover {
+  background-color: #c9a97f;
+}
+
+/* Links and toggle */
+.links {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #5c4b3e;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: #a18058;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.toggle-btn:hover {
+  color: #c9a97f;
+  background-color: #3b2f2f;
+}
+
+
+
+/* Responsive design */
+@media (max-width: 850px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .login-left {
+    height: 40vh;
+    padding: 1.5rem;
+  }
+
+  .login-right {
+    height: 60vh;
+  }
+
+  body {
+    overflow-y: hidden; /* still avoid scroll */
+  }
+}
