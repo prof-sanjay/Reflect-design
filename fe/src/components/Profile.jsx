@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Profile.css";
+import Navbar from "./Navbar.jsx";
 
 const Profile = () => {
   const [profile, setProfile] = useState({
@@ -23,6 +24,8 @@ const Profile = () => {
   };
 
   return (
+    <>
+    <Navbar/>
     <div className="profile-container">
       <h1 className="profile-title">My Profile</h1>
 
@@ -122,6 +125,7 @@ const Profile = () => {
         </button>
       </form>
     </div>
+    </>
   );
 };
 

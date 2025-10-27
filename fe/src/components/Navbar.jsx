@@ -21,7 +21,7 @@ const Navbar = () => {
           <div className={'bar ${isMobileOpen ? "open" : ""}'} />
         </div>
 
-        <Link to="/" className="navbar-logo">
+        <Link to="/reflect" className="navbar-logo">
           Reflect
         </Link>
       </header>
@@ -69,7 +69,7 @@ const Navbar = () => {
             <span className="label">Profile</span>
           </NavLink>
 
-          <Link to="/login" className="nav-link logout" onClick={closeMobile}>
+          <Link to="/" className="nav-link logout" onClick={closeMobile}>
             <span className="icon">🚪</span>
             <span className="label">Logout</span>
           </Link>
