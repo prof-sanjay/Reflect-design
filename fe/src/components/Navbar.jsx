@@ -15,7 +15,7 @@ const Navbar = ({ username = 'User', onLogout }) => {
 
       {/* Right Side: Navigation Links */}
       <div className="navbar-right">
-        <NavLink to="/" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} end>
+        <NavLink to="/home" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} end>
           Home
         </NavLink>
         <NavLink to="/my-reflections" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
