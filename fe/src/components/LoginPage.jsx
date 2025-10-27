@@ -55,7 +55,6 @@ const LoginPage = ({ onLogin }) => {
 
     const newUser = { username, password };
     localStorage.setItem("reflectUser", JSON.stringify(newUser));
-    alert("Signup successful! You can now log in.");
     handleToggle(false);
   };
 

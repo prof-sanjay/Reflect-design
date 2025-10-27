@@ -13,9 +13,9 @@ body {
 .topbar {
   display: flex;
   align-items: center;
-  background: #fff;
+  background-color: #e9d0a2;
   padding: 0.75rem 1rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(74, 52, 3, 0.1);
   position: sticky;
   top: 0;
   z-index: 1001;
@@ -60,9 +60,10 @@ body {
 /* --- Sidebar --- */
 .sidebar {
   position: fixed;
-  top: 0;
+  top: 60px; /* 👈 pushes sidebar below the topbar */
   left: 0;
-  height: 100%;
+  height: calc(100% - 60px); /* 👈 adjust height so it doesn’t overflow */
+
   width: 70px;
   background: #ffffff;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);

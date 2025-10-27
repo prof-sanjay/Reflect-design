@@ -9,16 +9,16 @@ function HomePage() {
   return (
     <div className="home-page">
 
-      <header className="navbar">
-        {/* <div className="logo">Reflect</div>
+      {/* <header className="navbar">
+        <div className="logo">Reflect</div>
         <nav className="nav-links">
           <Link to="/home" className="nav-item">Home</Link>
           <Link to="/my-reflections" className="nav-item">My Reflections</Link>
           <Link to="/profile" className="nav-item">Profile</Link>
           <Link to="/logout" className="nav-item logout">Logout</Link>
-        </nav> */}
-        <Navbar/>
-      </header>
+        </nav>
+      </header> */}
+      <Navbar/>
 
       {/* Page Content */}
       <div className="home-content">
