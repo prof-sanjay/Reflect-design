@@ -2,48 +2,41 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './HomePage.css';
 import Navbar from './Navbar.jsx';
+import MyReflections from './MyReflections.jsx';
 
 function HomePage() {
   const staticUsername = 'User'; 
 
   return (
     <div className="home-page">
+      <Navbar />
 
-      {/* <header className="navbar">
-        <div className="logo">Reflect</div>
-        <nav className="nav-links">
-          <Link to="/home" className="nav-item">Home</Link>
-          <Link to="/my-reflections" className="nav-item">My Reflections</Link>
-          <Link to="/profile" className="nav-item">Profile</Link>
-          <Link to="/logout" className="nav-item logout">Logout</Link>
-        </nav>
-      </header> */}
-      <Navbar/>
+      <div className="home-hero">
+        <div className="hero-content">
+          <h1 className="hero-title">Welcome back, {staticUsername} 🌿</h1>
+          <p className="hero-subtitle">
+            Reflect, grow, and rediscover yourself — one entry at a time.
+          </p>
+        </div>
+      </div>
 
-      {/* Page Content */}
-      <div className="home-content">
-        <h1 className="welcome-message">
-          Hello, {staticUsername}! Welcome
-        </h1>
+      <div className="home-sections">
+        <div className="section-card new-entry">
+          <h2>📝 Start a New Reflection</h2>
+          <p>Capture today’s thoughts and emotions in your journal.</p>
+          <button className="action-btn">Start Writing</button>
+        </div>
 
-        <div className="dashboard-grid">
-          {/* Quick Action Card: New Entry */}
-          <div className="action-card new-entry">
-            <h2>Start a New Reflection</h2>
-            <p>What's on your mind today? Let's record your thoughts.</p>
-          </div>
+        <div className="section-card past-entries">
+          <h2>📖 Review Past Entries</h2>
+          <p>Look back at your past reflections and see your journey unfold.</p>
+          <button className="action-btn">View Reflections</button>
+        </div>
 
-          {/* Quick View Card: Past Entries */}
-          <div className="action-card past-entries">
-            <h2>Review Past Entries</h2>
-            <p>Look back at your journey and see how far you've come.</p>
-          </div>
-
-          {/* Quick Action Card: Reports */}
-          <div className="action-card reports">
-            <h2>Generate Insights</h2>
-            <p>See patterns, moods, and trends over time.</p>
-          </div>
+        <div className="section-card reports">
+          <h2>📊 Generate Insights</h2>
+          <p>Understand your emotional patterns and track your growth.</p>
+          <button className="action-btn">View Reports</button>
         </div>
       </div>
     </div>

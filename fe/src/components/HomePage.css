@@ -1,155 +1,111 @@
-/* --- Navbar Styling --- */
-.navbar {
-  width: 100vw;
-  height: 80px;
-  background-color: #e9dcb0;
-  color: #75512e;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 3rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+/* --- Global Reset --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
 }
 
-.logo {
-  font-size: 1.8rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: #2e2a23;
-}
-
-.nav-links{  
-  display: flex;
-  gap: 2rem;
-  align-items: center;
-}
-
-.nav-item {
-  margin-right: 20%;
-  color: #4f412d;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.nav-item:hover {
-  color: #d8b892;
-}
-
-.logout {
-  padding: 0.5rem 1rem;
-  border: 1px solid #d8b892;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.logout:hover {
-  background-color: #d8b892;
-  color: #3b2f2f;
-}
-
-/* --- Main Content --- */
-.home-content {
-  padding: 2rem 3rem;
+.home-page {
   background-color: #f5efe6;
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.welcome-message {
-  color: #3b2f2f;
-  font-size: 2.2rem;
-  margin-bottom: 3rem;
+/* --- Hero Section --- */
+.home-hero {
+  background: linear-gradient(135deg, #d8b892 10%, #a18058 90%);
+  padding: 4rem 2rem;
+  text-align: center;
+  color: #2e2a23;
+  border-radius: 0 0 30px 30px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
   font-weight: 400;
+  color: #3b2f2f;
+  opacity: 0.9;
 }
 
-/* --- Dashboard Grid --- */
-.dashboard-grid {
+/* --- Section Cards --- */
+.home-sections {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
+  padding: 3rem 4rem;
 }
 
-/* --- Cards --- */
-.action-card {
+.section-card {
   background-color: #ffffff;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-left: 5px solid transparent;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  border-left: 6px solid transparent;
+  transition: all 0.3s ease;
+  transform: translateY(0);
 }
 
-.action-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+.section-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.action-card h2 {
+.section-card h2 {
   color: #3b2f2f;
-  font-size: 1.5rem;
-  margin-top: 0;
-  margin-bottom: 0.8rem;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
 }
 
-.action-card p {
+.section-card p {
   color: #6d5f53;
-  margin-bottom: 1.5rem;
-  min-height: 40px;
+  margin-bottom: 1.8rem;
+  font-size: 1rem;
 }
 
-/* --- Card Accent Borders --- */
+/* --- Accent Colors --- */
 .new-entry { border-left-color: #d8b892; }
 .past-entries { border-left-color: #a18058; }
 .reports { border-left-color: #786d5b; }
 
-/* --- Buttons (if re-enabled later) --- */
-.action-button {
-  display: inline-block;
-  padding: 0.8rem 1.5rem;
-  border-radius: 10px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: background-color 0.2s;
-  font-size: 1rem;
-}
-
-.primary-button {
+/* --- Buttons --- */
+.action-btn {
+  padding: 0.8rem 1.6rem;
   background-color: #d8b892;
-  color: #3b2f2f;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #2e2a23;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.primary-button:hover {
+.action-btn:hover {
   background-color: #c9a97f;
+  transform: scale(1.05);
 }
 
-.secondary-button {
-  background-color: #f9f5f0;
-  color: #3b2f2f;
-  border: 1px solid #d8cdbf;
-}
-
-.secondary-button:hover {
-  background-color: #e8ded1;
-}
-
-/* --- Responsive Navbar --- */
+/* --- Responsive --- */
 @media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    height: auto;
-    padding: 1rem 2rem;
+  .home-hero {
+    padding: 3rem 1.5rem;
   }
 
-  .nav-links {
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 0.5rem;
+  .hero-title {
+    font-size: 2rem;
   }
 
-  .logo {
-    margin-bottom: 0.5rem;
+  .home-sections {
+    padding: 2rem;
   }
 }
