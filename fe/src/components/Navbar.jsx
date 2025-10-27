@@ -1,33 +1,84 @@
-import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import './Navbar.css'; 
-// Note: This component assumes it is rendered inside <Router>
+import React, { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import "./Navbar.css";
 
-const Navbar = ({ username = 'User', onLogout }) => {
+const Navbar = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  const handleMouseEnter = () => setIsExpanded(true);
+  const handleMouseLeave = () => setIsExpanded(false);
+  const toggleMobile = () => setIsMobileOpen(!isMobileOpen);
+  const closeMobile = () => setIsMobileOpen(false);
+
   return (
-    <nav className="navbar">
-      {/* Left Side: Logo/Brand */}
-      <div className="navbar-left">
+    <>
+      {/* --- Top bar (mobile) --- */}
+      <header className="topbar">
+        <div className="hamburger" onClick={toggleMobile}>
+          <div className={'bar ${isMobileOpen ? "open" : ""}'} />
+          <div className={'bar ${isMobileOpen ? "open" : ""}'} />
+          <div className={'bar ${isMobileOpen ? "open" : ""}'} />
+        </div>
+
         <Link to="/" className="navbar-logo">
           Reflect
         </Link>
-      </div>
+      </header>
 
-      {/* Right Side: Navigation Links */}
-      <div className="navbar-right">
-        <NavLink to="/home" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} end>
-          Home
-        </NavLink>
-        <NavLink to="/my-reflections" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
-          Reflections
-        </NavLink>
-        <NavLink to="/profile" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
-          Profile
-        </NavLink>
-        <Link to="/login" className="nav-item logout">Logout</Link>
+      {/* --- Sidebar --- */}
+      <aside
+        className={`sidebar ${isExpanded ? "expanded" : ""} ${
+          isMobileOpen ? "mobile-open" : ""
+        }`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <nav className="nav-links">
+          <NavLink
+            to="/home"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+            onClick={closeMobile}
+            end
+          >
+            <span className="icon">🏠</span>
+            <span className="label">Home</span>
+          </NavLink>
 
-      </div>
-    </nav>
+          <NavLink
+            to="/my-reflections"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+            onClick={closeMobile}
+          >
+            <span className="icon">🪞</span>
+            <span className="label">Reflections</span>
+          </NavLink>
+
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+            onClick={closeMobile}
+          >
+            <span className="icon">👤</span>
+            <span className="label">Profile</span>
+          </NavLink>
+
+          <Link to="/login" className="nav-link logout" onClick={closeMobile}>
+            <span className="icon">🚪</span>
+            <span className="label">Logout</span>
+          </Link>
+        </nav>
+      </aside>
+
+      {/* Overlay for mobile */}
+      {isMobileOpen && <div className="overlay" onClick={closeMobile}></div>}
+    </>
   );
 };
 
