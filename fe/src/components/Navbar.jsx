@@ -59,6 +59,18 @@ const Navbar = () => {
           </NavLink>
 
           <NavLink
+             to="/TodoList"
+             className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+             }
+             onClick={closeMobile}
+          >
+            <span className="icon">✅</span>
+            <span className="label">To-Do List</span>
+           </NavLink>
+
+
+          <NavLink
             to="/profile"
             className={({ isActive }) =>
               isActive ? "nav-link active" : "nav-link"
