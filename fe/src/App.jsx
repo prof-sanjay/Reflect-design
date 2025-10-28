@@ -21,7 +21,7 @@ function App() {
         <Route path="/my-reflections" element={<MyReflections />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/new-reflection" element={<NewReflection />} />
-        <Route path="/TodoList" element ={<TodoList />} />
+        <Route path="/TodoList" element={<TodoList />} />
       </Routes>
     </>
   );
