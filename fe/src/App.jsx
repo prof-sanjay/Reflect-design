@@ -5,6 +5,7 @@ import LoginPage from "./components/LoginPage.jsx";
 import HomePage from "./components/HomePage.jsx";
 import MyReflections from "./components/MyReflections.jsx";
 import Profile from "./components/Profile.jsx";
+import NewReflection from "./components/NewReflection.jsx";
 
 function App() {
   const location = useLocation();
@@ -18,6 +19,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/my-reflections" element={<MyReflections />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/home/newreflection" element={<NewReflection />} />
       </Routes>
     </>
   );
