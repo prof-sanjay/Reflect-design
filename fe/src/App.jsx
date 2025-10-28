@@ -19,7 +19,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/my-reflections" element={<MyReflections />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/home/newreflection" element={<NewReflection />} />
+        <Route path="/new-reflection" element={<NewReflection />} />
       </Routes>
     </>
   );

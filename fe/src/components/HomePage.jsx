@@ -25,7 +25,7 @@ function HomePage() {
         <div className="section-card new-entry">
           <h2>📝 Start a New Reflection</h2>
           <p>Capture today’s thoughts and emotions in your journal.</p>
-          <Link to='/home/new-reflection' className="action-btn">Start Writing</Link>
+          <Link to='/new-reflection' className="action-btn">Start Writing</Link>
         </div>
 
         <div className="section-card past-entries">

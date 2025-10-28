@@ -1,77 +1,58 @@
 import React, { useState } from "react";
-import "./ReflectionEditor.css";
+import Navbar from "./Navbar.jsx";
+import ReflectionEditor from "./ReflectionEditor.jsx";
+import "./NewReflection.css";
 
-const ReflectionEditor = ({ selectedDate }) => {
-  const [text, setText] = useState("");
-  const [mood, setMood] = useState("Neutral");
+const NewReflection = () => {
+  const [mood, setMood] = useState("");
+  const [content, setContent] = useState("");
 
-  const moods = [
-    { name: "Happy", icon: "😊" },
-    { name: "Neutral", icon: "😐" },
-    { name: "Sad", icon: "😢" },
-    { name: "Angry", icon: "😠" },
-    { name: "Anxious", icon: "😰" },
-  ];
-
-  const handleSave = (e) => {
-    e.preventDefault();
-    if (!selectedDate) {
-      alert("Please select a date first!");
-      return;
-    }
-    if (!text.trim()) {
-      alert("Please write something before saving.");
+  const handleSave = () => {
+    if (!content || !mood) {
+      alert("Please fill in your reflection and select a mood before saving.");
       return;
     }
 
-    alert(`Saved reflection for ${selectedDate} (Mood: ${mood})`);
-    setText("");
+    console.log("Reflection Saved:", { mood, content });
+    alert("Reflection saved successfully!");
+    setMood("");
+    setContent("");
   };
 
   return (
-    <div className="reflection-editor">
-      <h2>
-        {selectedDate
-          ? `Reflection for ${selectedDate}`
-          : "Select a date to write your reflection"}
-      </h2>
+    <div className="new-reflection-page">
+      <Navbar />
 
-      {selectedDate && (
-        <form onSubmit={handleSave} className="reflection-form">
-          <textarea
-            className="reflection-textarea"
-            placeholder="How was your day? Write your thoughts here..."
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            maxLength={500}
-          ></textarea>
+      <div className="new-reflection-container">
+        <h1 className="reflection-title">🧘‍♀️ New Reflection</h1>
 
-          <div className="char-count">{text.length}/500</div>
+        <div className="reflection-form">
+          <label htmlFor="mood">Mood</label>
+          <select
+            id="mood"
+            value={mood}
+            onChange={(e) => setMood(e.target.value)}
+            className="reflection-select"
+          >
+            <option value="">-- Select your mood --</option>
+            <option value="happy">😊 Happy</option>
+            <option value="sad">😔 Sad</option>
+            <option value="neutral">😐 Neutral</option>
+            <option value="anxious">😰 Anxious</option>
+            <option value="angry">😠 Angry</option>
+            <option value="grateful">🙏 Grateful</option>
+          </select>
 
-          <div className="mood-picker">
-            <p className="mood-label">Select your mood:</p>
-            <div className="mood-options">
-              {moods.map((m) => (
-                <button
-                  type="button"
-                  key={m.name}
-                  className={`mood-btn ${mood === m.name ? "selected" : ""}`}
-                  onClick={() => setMood(m.name)}
-                >
-                  <span className="mood-icon">{m.icon}</span>
-                  <span>{m.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+          <label>Your Reflection</label>
+          <ReflectionEditor content={content} setContent={setContent} />
 
-          <button type="submit" className="save-btn">
-            Save Reflection
+          <button className="save-btn" onClick={handleSave}>
+            💾 Save Reflection
           </button>
-        </form>
-      )}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default ReflectionEditor;
+export default NewReflection;

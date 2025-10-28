@@ -1,23 +1,21 @@
 import React, { useState } from "react";
 import Navbar from "./Navbar.jsx";
-import ReflectionEditor from "./ReflectionEditor.jsx";
 import "./NewReflection.css";
 
 const NewReflection = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [mood, setMood] = useState("neutral");
+  const [reflection, setReflection] = useState("");
+  const [mood, setMood] = useState("");
 
   const handleSave = () => {
-    if (!title || !content) {
-      alert("Please complete all fields before saving.");
+    if (!reflection || !mood) {
+      alert("Please fill in your reflection and select a mood before saving.");
       return;
     }
-    console.log("Reflection saved:", { title, content, mood });
-    alert("Your reflection has been saved successfully!");
-    setTitle("");
-    setContent("");
-    setMood("neutral");
+
+    console.log("Saved Reflection:", { reflection, mood });
+    alert("Reflection saved successfully!");
+    setReflection("");
+    setMood("");
   };
 
   return (
@@ -25,33 +23,34 @@ const NewReflection = () => {
       <Navbar />
 
       <div className="new-reflection-container">
-        <h1 className="reflection-title">📝 Start a New Reflection</h1>
+        <h1 className="reflection-title">🧠 New Reflection</h1>
 
         <div className="reflection-form">
-          <label>Title</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter a title for your reflection..."
-            className="reflection-input"
-          />
-
-          <label>Mood</label>
+          <label htmlFor="mood">Mood</label>
           <select
+            id="mood"
             value={mood}
             onChange={(e) => setMood(e.target.value)}
             className="reflection-select"
           >
+            <option value="">-- Select your mood --</option>
             <option value="happy">😊 Happy</option>
             <option value="sad">😔 Sad</option>
             <option value="neutral">😐 Neutral</option>
-            <option value="excited">🤩 Excited</option>
+            <option value="anxious">😰 Anxious</option>
             <option value="angry">😠 Angry</option>
+            <option value="grateful">🙏 Grateful</option>
           </select>
 
-          <label>Your Reflection</label>
-          <ReflectionEditor content={content} setContent={setContent} />
+          <label htmlFor="reflection">Reflection</label>
+          <textarea
+            id="reflection"
+            value={reflection}
+            onChange={(e) => setReflection(e.target.value)}
+            placeholder="Write your thoughts here..."
+            className="reflection-textarea"
+            rows="8"
+          ></textarea>
 
           <button className="save-btn" onClick={handleSave}>
             💾 Save Reflection
