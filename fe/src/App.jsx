@@ -6,6 +6,7 @@ import HomePage from "./components/HomePage.jsx";
 import MyReflections from "./components/MyReflections.jsx";
 import Profile from "./components/Profile.jsx";
 import NewReflection from "./components/NewReflection.jsx";
+import TodoList from "./components/TodoList.jsx";
 
 function App() {
   const location = useLocation();
@@ -20,6 +21,7 @@ function App() {
         <Route path="/my-reflections" element={<MyReflections />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/new-reflection" element={<NewReflection />} />
+        <Route path="/TodoList" element ={<TodoList />} />
       </Routes>
     </>
   );
