@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import "./Navbar.css";
+import Settings from "./Settings.jsx";
+import TodoList from "./TodoList.jsx";
+
 
 const Navbar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -13,12 +16,12 @@ const Navbar = () => {
 
   return (
     <>
-      {/* --- Top bar (mobile) --- */}
+      {/* --- Top bar --- */}
       <header className="topbar">
         <div className="hamburger" onClick={toggleMobile}>
-          <div className={'bar ${isMobileOpen ? "open" : ""}'} />
-          <div className={'bar ${isMobileOpen ? "open" : ""}'} />
-          <div className={'bar ${isMobileOpen ? "open" : ""}'} />
+          <div className={`bar ${isMobileOpen ? "open" : ""}`} />
+          <div className={`bar ${isMobileOpen ? "open" : ""}`} />
+          <div className={`bar ${isMobileOpen ? "open" : ""}`} />
         </div>
 
         <Link to="/reflect" className="navbar-logo">
@@ -59,7 +62,7 @@ const Navbar = () => {
           </NavLink>
 
           <NavLink
-             to="/TodoList"
+             to="/To-do-list"
              className={({ isActive }) =>
               isActive ? "nav-link active" : "nav-link"
              }
@@ -67,10 +70,26 @@ const Navbar = () => {
           >
             <span className="icon">✅</span>
             <span className="label">To-Do List</span>
-           </NavLink>
-
+          </NavLink>
 
           <NavLink
+              to="/goals"
+              className={({ isActive }) =>
+                isActive ? "nav-link active" : "nav-link"
+              }
+              onClick={closeMobile}
+            >
+              <span className="icon">🎯</span>
+              <span className="label">Goals</span>
+          </NavLink>
+
+
+
+        </nav>
+
+        {/* --- Bottom Links --- */}
+        <div className="bottom-links">
+           <NavLink
             to="/profile"
             className={({ isActive }) =>
               isActive ? "nav-link active" : "nav-link"
@@ -80,12 +99,22 @@ const Navbar = () => {
             <span className="icon">👤</span>
             <span className="label">Profile</span>
           </NavLink>
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+            onClick={closeMobile}
+          >
+            <span className="icon">⚙️</span>
+            <span className="label">Settings</span>
+          </NavLink>
 
           <Link to="/" className="nav-link logout" onClick={closeMobile}>
             <span className="icon">🚪</span>
             <span className="label">Logout</span>
           </Link>
-        </nav>
+        </div>
       </aside>
 
       {/* Overlay for mobile */}

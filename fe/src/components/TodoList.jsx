@@ -1,94 +1,77 @@
-import React, { useState, useEffect } from "react";
-import "./TodoList.css";
-import Navbar from "./Navbar.jsx"
+import React, { useState } from "react";
+import Navbar from "./Navbar.jsx";
+import "./ToDoList.css";
 
-const TodoList = () => {
-  const [todos, setTodos] = useState(() => {
-    const saved = localStorage.getItem("todos");
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [showInput, setShowInput] = useState(false);
-  const [input, setInput] = useState("");
+const ToDoList = () => {
+  const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState("");
 
-  useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
-
-  const addTodo = () => {
-    if (input.trim() === "") return;
-    setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
-    setInput("");
-    setShowInput(false);
+  const handleAddTask = () => {
+    if (newTask.trim() === "") return alert("Please enter a task.");
+    setTasks([...tasks, { text: newTask, completed: false }]);
+    setNewTask("");
   };
 
-  const toggleTodo = (id) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
+  const toggleTask = (index) => {
+    const updated = tasks.map((task, i) =>
+      i === index ? { ...task, completed: !task.completed } : task
     );
+    setTasks(updated);
   };
 
-  const deleteTodo = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+  const deleteTask = (index) => {
+    setTasks(tasks.filter((_, i) => i !== index));
   };
 
   return (
-    <div className="todo-container">
-      <div className="todo-header">
-        <h2 className="todo-title">Checklist</h2>
-        <button className="add-btn" onClick={() => setShowInput(!showInput)}>
-          + Add Task
-        </button>
-      </div>
+    <div className="todolist-page">
+      <Navbar />
+      <div className="todolist-container">
+        <h1 className="todolist-title">📋 My To-Do List</h1>
 
-      {showInput && (
-        <div className="todo-input-section">
+        {/* Add new task */}
+        <div className="add-task">
           <input
             type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Enter new task..."
-            onKeyDown={(e) => e.key === "Enter" && addTodo()}
-            className="todo-input"
+            placeholder="Add a new task..."
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+            className="task-input"
           />
-          <button onClick={addTodo} className="todo-save-btn">
-            Add
+          <button onClick={handleAddTask} className="add-btn">
+            ➕ Add
           </button>
         </div>
-      )}
 
-      <ul className="todo-list">
-        {todos.map((todo) => (
-          <li key={todo.id} className="todo-item">
-            <div className="todo-left">
-              <input
-                type="checkbox"
-                checked={todo.completed}
-                onChange={() => toggleTodo(todo.id)}
-                className="todo-checkbox"
-              />
-              <span
-                className={`todo-text ${todo.completed ? "completed" : ""}`}
+        {/* Task list */}
+        <div className="task-list">
+          {tasks.length === 0 ? (
+            <p className="no-tasks">No tasks yet. Add your first one!</p>
+          ) : (
+            tasks.map((task, index) => (
+              <div
+                key={index}
+                className={`task-card ${task.completed ? "completed" : ""}`}
               >
-                {todo.text}
-              </span>
-            </div>
-            <button
-              className="delete-btn"
-              onClick={() => deleteTodo(todo.id)}
-            >
-              ✕
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      {todos.length === 0 && (
-        <p className="todo-empty">No tasks yet. Add one above 👆</p>
-      )}
+                <div
+                  className="task-text"
+                  onClick={() => toggleTask(index)}
+                >
+                  {task.text}
+                </div>
+                <div className="task-actions">
+                  <button onClick={() => toggleTask(index)}>
+                    {task.completed ? "✅" : "☐"}
+                  </button>
+                  <button onClick={() => deleteTask(index)}>🗑️</button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default TodoList;
+export default ToDoList;

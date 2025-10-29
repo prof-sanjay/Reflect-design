@@ -1,0 +1,112 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Entire Page */
+.settings-page {
+  background: #f8f4ed;
+  min-height: 100vh;
+  padding-top: 80px; /* Prevent overlap with navbar */
+  margin-left: 70px; /* Adjust to match sidebar width */
+  transition: all 0.3s ease;
+}
+
+/* Responsive sidebar adjustment */
+@media (min-width: 769px) {
+  .sidebar.expanded ~ .settings-page {
+    margin-left: 220px;
+  }
+}
+
+/* Main container */
+.settings-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: #fffdf8;
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Title */
+.settings-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #4a3b10;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Each section */
+.settings-section {
+  margin-bottom: 2rem;
+  background: #fffaf1;
+  border: 1px solid #e9d0a2;
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settings-section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(74, 52, 3, 0.1);
+}
+
+.settings-section h3 {
+  font-size: 1.3rem;
+  color: #4a3b10;
+  margin-bottom: 0.5rem;
+}
+
+.settings-section p {
+  color: #5b4a1f;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+/* Theme select */
+.theme-select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1px solid #d6b874;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: #fffefc;
+  color: #333;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-select:hover,
+.theme-select:focus {
+  border-color: #b7923c;
+  box-shadow: 0 0 4px rgba(183, 146, 60, 0.4);
+}
+
+/* Export button */
+.export-btn {
+  display: inline-block;
+  padding: 0.8rem 1.4rem;
+  background-color: #b7923c;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.export-btn:hover {
+  background-color: #a67c2c;
+  transform: translateY(-2px);
+}
+
+.export-btn:active {
+  transform: translateY(1px);
+}
