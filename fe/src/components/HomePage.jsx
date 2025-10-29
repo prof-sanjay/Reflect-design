@@ -1,45 +1,60 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './HomePage.css';
-import Navbar from './Navbar.jsx';
-import MyReflections from './MyReflections.jsx';
-import NewReflection from './NewReflection.jsx';
+import React from "react";
+import { Link } from "react-router-dom";
+import Navbar from "./Navbar.jsx";
+import "./HomePage.css";
 
 function HomePage() {
-  const staticUsername = 'User'; 
+  const username = "User";
 
   return (
     <div className="home-page">
+      {/* Navbar */}
       <Navbar />
 
-      <div className="home-hero">
-        <div className="hero-content">
-          <h1 className="hero-title">Welcome back, {staticUsername} 🌿</h1>
-          <p className="hero-subtitle">
-            Reflect, grow, and rediscover yourself — one entry at a time.
-          </p>
-        </div>
-      </div>
+      {/* Hero Section */}
+      <header className="home-hero">
+        <h1 className="hero-title">Welcome back, {username} 🌿</h1>
+        <p className="hero-subtitle">
+          Reflect, grow, and rediscover yourself — one entry at a time.
+        </p>
+      </header>
 
-      <div className="home-sections">
-        <div className="section-card new-entry">
+      {/* Section Grid */}
+      <main className="home-sections">
+        {/* New Reflection */}
+        <section className="section-card new-entry">
           <h2>📝 Start a New Reflection</h2>
           <p>Capture today’s thoughts and emotions in your journal.</p>
-          <Link to='/new-reflection' className="action-btn">Start Writing</Link>
-        </div>
+          <Link to="/new-reflection" className="action-btn">
+            Start Writing
+          </Link>
+        </section>
 
-        <div className="section-card past-entries">
+        {/* Search Reflections */}
+        <section className="section-card past-entries">
           <h2>📖 Search Reflections</h2>
           <p>Look back at your past reflections and see your journey unfold.</p>
-          <Link to='/viewreport' className="action-btn">Search</Link>
-        </div>
+          <Link to="/viewreport" className="action-btn">
+            Search
+          </Link>
+        </section>
 
-        <div className="section-card reports">
+        {/* Reports */}
+        <section className="section-card reports">
           <h2>📊 Mental Health Insights</h2>
-          <p>Understand your emotional patterns and track your Mental Growth.</p>
+          <p>Understand your emotional patterns and track your mental growth.</p>
           <button className="action-btn">View Reports</button>
-        </div>
-      </div>
+        </section>
+
+        {/* ✅ Personal Wellness */}
+        <section className="section-card wellness">
+          <h2>🌸 Personal Wellness</h2>
+          <p>Check in with your habits, routines, and overall well-being.</p>
+          <Link to="/personal-wellness" className="action-btn">
+            Open Form
+          </Link>
+        </section>
+      </main>
     </div>
   );
 }
