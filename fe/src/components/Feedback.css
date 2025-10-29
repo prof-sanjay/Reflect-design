@@ -70,3 +70,21 @@
 .submit-btn:hover {
   background: #d6b874;
 }
+
+.word-count {
+  text-align: right;
+  font-size: 0.9rem;
+  color: #6b5b2c;
+  margin-top: -8px;
+  margin-bottom: 10px;
+}
+
+.limit-exceeded {
+  color: #c0392b;
+  font-weight: bold;
+}
+
+.submit-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}

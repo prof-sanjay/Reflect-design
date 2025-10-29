@@ -5,6 +5,14 @@ import "./Feedback.css";
 const Feedback = () => {
   const [rating, setRating] = useState("");
   const [comments, setComments] = useState("");
+  const [wordCount, setWordCount] = useState(0);
+
+  const handleCommentsChange = (e) => {
+    const text = e.target.value;
+    const words = text.trim().split(/\s+/).filter((word) => word.length > 0);
+    setComments(text);
+    setWordCount(words.length);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -13,10 +21,17 @@ const Feedback = () => {
       return;
     }
 
+    const words = comments.trim().split(/\s+/);
+    if (words.length > 100) {
+      alert("Your feedback exceeds 100 words. Please shorten it.");
+      return;
+    }
+
     console.log("Feedback submitted:", { rating, comments });
     alert("Thank you for your valuable feedback!");
     setRating("");
     setComments("");
+    setWordCount(0);
   };
 
   return (
@@ -43,11 +58,23 @@ const Feedback = () => {
           <label>Your Comments</label>
           <textarea
             value={comments}
-            onChange={(e) => setComments(e.target.value)}
-            placeholder="Write your feedback here..."
+            onChange={handleCommentsChange}
+            placeholder="Write your feedback here (max 50 words)..."
           />
 
-          <button type="submit" className="submit-btn">
+          <p
+            className={`word-count ${
+              wordCount > 100 ? "limit-exceeded" : ""
+            }`}
+          >
+            {wordCount}/50 words
+          </p>
+
+          <button
+            type="submit"
+            className="submit-btn"
+            disabled={wordCount > 50}
+          >
             🚀 Submit Feedback
           </button>
         </form>
