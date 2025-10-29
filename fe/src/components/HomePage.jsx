@@ -29,14 +29,14 @@ function HomePage() {
         </div>
 
         <div className="section-card past-entries">
-          <h2>📖 Review Past Entries</h2>
+          <h2>📖 Search Reflections</h2>
           <p>Look back at your past reflections and see your journey unfold.</p>
-          <Link to='/viewreport' className="action-btn">View Reflections</Link>
+          <Link to='/viewreport' className="action-btn">Search</Link>
         </div>
 
         <div className="section-card reports">
-          <h2>📊 Generate Insights</h2>
-          <p>Understand your emotional patterns and track your growth.</p>
+          <h2>📊 Mental Health Insights</h2>
+          <p>Understand your emotional patterns and track your Mental Growth.</p>
           <button className="action-btn">View Reports</button>
         </div>
       </div>

@@ -19,8 +19,6 @@ const MyReflections = () => {
 });
 
 
-
-
   return (
     <>
       <Navbar />
