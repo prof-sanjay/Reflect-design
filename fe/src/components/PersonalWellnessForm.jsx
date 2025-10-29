@@ -59,29 +59,6 @@ const PersonalWellnessForm = () => {
         <h1 className="page-title">🌿 Personal Wellness & Lifestyle Tracker</h1>
 
         <form className="wellness-form" onSubmit={handleSubmit}>
-          {/* Personal Details */}
-          <section className="form-section">
-            <h2>Personal Details</h2>
-            <div className="form-group">
-              <label>Name</label>
-              <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-            </div>
-
-            <div className="form-group">
-              <label>Gender</label>
-              <select name="gender" value={formData.gender} onChange={handleChange} required>
-                <option value="">Select</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Date of Birth</label>
-              <input type="date" name="dob" value={formData.dob} onChange={handleChange} required />
-            </div>
-          </section>
 
           {/* Hobbies */}
           <section className="form-section">

@@ -32,7 +32,6 @@ const LoginPage = ({ onLogin }) => {
     }
 
     if (savedUser.username === username && savedUser.password === password) {
-      alert("Login Successful!");
       if (onLogin) onLogin(savedUser);
       navigate("/home"); // ✅ Redirect to Home page
     } else {

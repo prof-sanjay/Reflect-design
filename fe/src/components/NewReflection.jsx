@@ -27,14 +27,6 @@ const NewReflection = () => {
         <h1 className="reflection-title">📝 Start a New Reflection</h1>
 
         <div className="reflection-form">
-          <label>Title</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter a title for your reflection..."
-            className="reflection-input"
-          />
 
           <label>Mood</label>
           <select

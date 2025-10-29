@@ -40,6 +40,15 @@ const Goals = () => {
     setNewSubgoal("");
   };
 
+  // ❌ Delete goal
+  const deleteGoal = (goalId) => {
+    const confirmed = window.confirm("Are you sure you want to delete this goal?");
+    if (!confirmed) return;
+    const updatedGoals = goals.filter((goal) => goal.id !== goalId);
+    setGoals(updatedGoals);
+    if (selectedGoal === goalId) setSelectedGoal(null);
+  };
+
   return (
     <div className="goals-page">
       <Navbar />
@@ -68,14 +77,24 @@ const Goals = () => {
           ) : (
             goals.map((goal) => (
               <div key={goal.id} className="goal-card">
-                <div
-                  className="goal-header"
-                  onClick={() => selectGoal(goal.id)}
-                >
-                  <span>{goal.title}</span>
-                  <span className="expand-icon">
-                    {selectedGoal === goal.id ? "🔽" : "▶️"}
+                <div className="goal-header">
+                  <span onClick={() => selectGoal(goal.id)} className="goal-title">
+                    {goal.title}
                   </span>
+                  <div className="goal-actions">
+                    <span
+                      className="expand-icon"
+                      onClick={() => selectGoal(goal.id)}
+                    >
+                      {selectedGoal === goal.id ? "🔽" : "▶️"}
+                    </span>
+                    <button
+                      className="delete-btn"
+                      onClick={() => deleteGoal(goal.id)}
+                    >
+                      ✖️
+                    </button>
+                  </div>
                 </div>
 
                 {/* Subgoals Section */}

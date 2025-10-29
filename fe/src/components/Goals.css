@@ -97,6 +97,32 @@
   color: #333;
 }
 
+.goal-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: #a30000;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.delete-btn:hover {
+  color: #e60000;
+  transform: scale(1.2);
+}
+
+.goal-title {
+  flex: 1;
+  cursor: pointer;
+}
+
+
 .add-subgoal {
   display: flex;
   gap: 0.5rem;
