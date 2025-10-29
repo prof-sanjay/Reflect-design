@@ -61,3 +61,9 @@
 .save-btn:hover {
   background-color: #0056b3;
 }
+
+.error-text {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
