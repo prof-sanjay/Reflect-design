@@ -155,3 +155,61 @@
   text-align: center;
   margin-top: 2rem;
 }
+
+.date-input {
+  padding: 0.7rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #4a3503;
+  background: #fff;
+}
+
+.goal-title-section {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.goal-deadline {
+  font-size: 0.9rem;
+  color: #7a6a40;
+  margin-top: 0.2rem;
+}
+
+/* Reminder Badge */
+.reminder-badge {
+  background-color: #f9e79f;
+  color: #5d4400;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Overdue Warning */
+.warning-badge {
+  background-color: #ffb3b3;
+  color: #7a0000;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.overdue {
+  border: 1px solid #ff7b7b;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
+}
+
+.days-input {
+  width: 180px;
+  padding: 0.7rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #4a3503;
+  background: #fff;
+}
+
+

@@ -36,6 +36,7 @@
   border: 1px solid #c9b69c;
   font-size: 1rem;
   outline: none;
+  width: 60vw;
 }
 
 .task-input:focus {

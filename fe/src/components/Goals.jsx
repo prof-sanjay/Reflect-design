@@ -5,24 +5,41 @@ import "./Goals.css";
 const Goals = () => {
   const [goals, setGoals] = useState([]);
   const [newGoal, setNewGoal] = useState("");
+  const [daysToComplete, setDaysToComplete] = useState("");
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [newSubgoal, setNewSubgoal] = useState("");
 
-  // Add new goal
+  // Add new goal with calculated deadline
   const addGoal = () => {
     if (!newGoal.trim()) return alert("Please enter a goal!");
-    const goal = { id: Date.now(), title: newGoal, subgoals: [] };
+    if (!daysToComplete || isNaN(daysToComplete) || daysToComplete <= 0)
+      return alert("Please enter a valid number of days greater than 0!");
+
+    // Calculate deadline
+    const today = new Date();
+    const deadline = new Date(today);
+    deadline.setDate(today.getDate() + Number(daysToComplete));
+
+    const goal = {
+      id: Date.now(),
+      title: newGoal,
+      subgoals: [],
+      daysToComplete: Number(daysToComplete),
+      deadline: deadline.toISOString(),
+    };
+
     setGoals([...goals, goal]);
     setNewGoal("");
+    setDaysToComplete("");
   };
 
-  // Select a goal to add subgoals
+  // Select a goal
   const selectGoal = (goalId) => {
     setSelectedGoal(goalId === selectedGoal ? null : goalId);
     setNewSubgoal("");
   };
 
-  // Add subgoal to a specific goal
+  // Add subgoal
   const addSubgoal = (goalId) => {
     if (!newSubgoal.trim()) return alert("Please enter a subgoal!");
     const updatedGoals = goals.map((goal) =>
@@ -40,13 +57,21 @@ const Goals = () => {
     setNewSubgoal("");
   };
 
-  // ❌ Delete goal
+  // Delete a goal
   const deleteGoal = (goalId) => {
     const confirmed = window.confirm("Are you sure you want to delete this goal?");
     if (!confirmed) return;
     const updatedGoals = goals.filter((goal) => goal.id !== goalId);
     setGoals(updatedGoals);
     if (selectedGoal === goalId) setSelectedGoal(null);
+  };
+
+  // Helper: calculate days remaining
+  const getDaysLeft = (deadline) => {
+    const today = new Date();
+    const dueDate = new Date(deadline);
+    const diffTime = dueDate - today;
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
   return (
@@ -65,6 +90,13 @@ const Goals = () => {
             onChange={(e) => setNewGoal(e.target.value)}
             className="goal-input"
           />
+          <input
+            type="number"
+            placeholder="Days to complete"
+            value={daysToComplete}
+            onChange={(e) => setDaysToComplete(e.target.value)}
+            className="days-input"
+          />
           <button className="goal-btn" onClick={addGoal}>
             ➕ Add Goal
           </button>
@@ -75,56 +107,84 @@ const Goals = () => {
           {goals.length === 0 ? (
             <p className="no-goals">No goals added yet. Start your journey!</p>
           ) : (
-            goals.map((goal) => (
-              <div key={goal.id} className="goal-card">
-                <div className="goal-header">
-                  <span onClick={() => selectGoal(goal.id)} className="goal-title">
-                    {goal.title}
-                  </span>
-                  <div className="goal-actions">
-                    <span
-                      className="expand-icon"
+            goals.map((goal) => {
+              const daysLeft = getDaysLeft(goal.deadline);
+              const isReminder = daysLeft <= 2 && daysLeft > 0;
+              const isOverdue = daysLeft < 0;
+
+              return (
+                <div
+                  key={goal.id}
+                  className={`goal-card ${isOverdue ? "overdue" : ""}`}
+                >
+                  <div className="goal-header">
+                    <div
+                      className="goal-title-section"
                       onClick={() => selectGoal(goal.id)}
                     >
-                      {selectedGoal === goal.id ? "🔽" : "▶️"}
-                    </span>
-                    <button
-                      className="delete-btn"
-                      onClick={() => deleteGoal(goal.id)}
-                    >
-                      ✖️
-                    </button>
-                  </div>
-                </div>
+                      <span className="goal-title">{goal.title}</span>
+                      <div className="goal-deadline">
+                        🗓️ Deadline:{" "}
+                        {new Date(goal.deadline).toLocaleDateString()} (
+                        {goal.daysToComplete} days)
+                      </div>
+                    </div>
 
-                {/* Subgoals Section */}
-                {selectedGoal === goal.id && (
-                  <div className="subgoal-section">
-                    <ul>
-                      {goal.subgoals.map((sub) => (
-                        <li key={sub.id}>• {sub.title}</li>
-                      ))}
-                    </ul>
-
-                    <div className="add-subgoal">
-                      <input
-                        type="text"
-                        placeholder="Add a subgoal..."
-                        value={newSubgoal}
-                        onChange={(e) => setNewSubgoal(e.target.value)}
-                        className="subgoal-input"
-                      />
-                      <button
-                        className="subgoal-btn"
-                        onClick={() => addSubgoal(goal.id)}
+                    <div className="goal-actions">
+                      {isReminder && (
+                        <span className="reminder-badge">
+                          ⏰ {daysLeft} days left
+                        </span>
+                      )}
+                      {isOverdue && (
+                        <span className="warning-badge">
+                          ⚠️ Deadline passed!
+                        </span>
+                      )}
+                      <span
+                        className="expand-icon"
+                        onClick={() => selectGoal(goal.id)}
                       >
-                        ➕ Add
+                        {selectedGoal === goal.id ? "🔽" : "▶️"}
+                      </span>
+                      <button
+                        className="delete-btn"
+                        onClick={() => deleteGoal(goal.id)}
+                      >
+                        ✖️
                       </button>
                     </div>
                   </div>
-                )}
-              </div>
-            ))
+
+                  {/* Subgoals */}
+                  {selectedGoal === goal.id && (
+                    <div className="subgoal-section">
+                      <ul>
+                        {goal.subgoals.map((sub) => (
+                          <li key={sub.id}>• {sub.title}</li>
+                        ))}
+                      </ul>
+
+                      <div className="add-subgoal">
+                        <input
+                          type="text"
+                          placeholder="Add a subgoal..."
+                          value={newSubgoal}
+                          onChange={(e) => setNewSubgoal(e.target.value)}
+                          className="subgoal-input"
+                        />
+                        <button
+                          className="subgoal-btn"
+                          onClick={() => addSubgoal(goal.id)}
+                        >
+                          ➕ Add
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })
           )}
         </div>
       </div>
