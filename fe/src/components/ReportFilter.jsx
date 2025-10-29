@@ -1,99 +1,107 @@
 import React, { useState } from "react";
-import "./ReportFilter.css"; // can keep same CSS
+import Navbar from "./Navbar.jsx";
+import "./ReportFilter.css";
 
-const JournalForm = () => {
-  const [text, setText] = useState("");
-  const [charCount, setCharCount] = useState(0);
-  const [mood, setMood] = useState("");
-  
-  const moods = [
-    { name: "happy", icon: "😊" },
-    { name: "sad", icon: "😢" },
-    { name: "angry", icon: "😠" },
-    { name: "anxious", icon: "😰" },
-    { name: "calm", icon: "😌" },
-    { name: "excited", icon: "🤩" },
+const ReportFilter = () => {
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [mood, setMood] = useState("all");
+
+  // Dummy reflections (replace later with DB data)
+  const reflections = [
+    {
+      id: 1,
+      title: "Grateful Morning",
+      mood: "happy",
+      date: "2025-10-20",
+      content: "Woke up early and had a great start with yoga and gratitude journaling.",
+    },
+    {
+      id: 2,
+      title: "Tough Day",
+      mood: "sad",
+      date: "2025-10-22",
+      content: "Had a rough day, but learned to stay patient and mindful.",
+    },
+    {
+      id: 3,
+      title: "Productive Evening",
+      mood: "excited",
+      date: "2025-10-25",
+      content: "Completed all my tasks on time and felt accomplished!",
+    },
   ];
 
-  const handleChange = (e) => {
-    setText(e.target.value);
-    setCharCount(e.target.value.length);
-  };
-
-  const handleMoodChange = (m) => {
-    setMood(m);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!text.trim()) return alert("Please write something!");
-    alert(`Saved!\nMood: ${mood}\nReflection: ${text}`);
-    setText("");
-    setMood("");
-    setCharCount(0);
-  };
+  // Filtering logic
+  const filteredReflections = reflections.filter((entry) => {
+    const entryDate = new Date(entry.date);
+    const isWithinDateRange =
+      (!fromDate || entryDate >= new Date(fromDate)) &&
+      (!toDate || entryDate <= new Date(toDate));
+    const matchesMood = mood === "all" || entry.mood === mood;
+    return isWithinDateRange && matchesMood;
+  });
 
   return (
-    <div className="journal-container">
-      <header className="journal-header">
-        <h1 className="journal-title">Reflect</h1>
-        <p className="journal-tagline">“Your thoughts shape your tomorrow.”</p>
-      </header>
+    <div className="report-page">
+      <Navbar />
 
-      <main className="journal-content">
-        <div className="journal-card">
-          <form className="journal-form" onSubmit={handleSubmit}>
-            <h2 className="form-heading">Write Your Thoughts</h2>
+      <div className="report-container">
+        <h1 className="report-title">📊 Reflection Reports</h1>
 
-            <textarea
-              name="text"
-              placeholder="How are you feeling today? Write freely..."
-              value={text}
-              onChange={handleChange}
-              required
-              maxLength={500}
-              className="journal-textarea"
-            ></textarea>
+        {/* --- Filter Form --- */}
+        <div className="filter-form">
+          <div className="filter-item">
+            <label>From:</label>
+            <input
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+            />
+          </div>
 
-            <div className="char-count">{charCount}/500</div>
+          <div className="filter-item">
+            <label>To:</label>
+            <input
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+            />
+          </div>
 
-            <div className="mood-picker">
-              <p className="mood-label">Select your mood:</p>
-              <div className="mood-options">
-                {moods.map((m) => (
-                  <button
-                    type="button"
-                    key={m.name}
-                    className={`mood-btn ${mood === m.name ? "selected" : ""}`}
-                    onClick={() => handleMoodChange(m.name)}
-                  >
-                    <span className="mood-icon">{m.icon}</span>
-                    <span>{m.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <button type="submit" className="save-btn">
-              Save Entry
-            </button>
-          </form>
+          <div className="filter-item">
+            <label>Mood:</label>
+            <select value={mood} onChange={(e) => setMood(e.target.value)}>
+              <option value="all">All</option>
+              <option value="happy">😊 Happy</option>
+              <option value="sad">😔 Sad</option>
+              <option value="neutral">😐 Neutral</option>
+              <option value="excited">🤩 Excited</option>
+              <option value="angry">😠 Angry</option>
+            </select>
+          </div>
         </div>
 
-        <section className="past-entries">
-          <h3>Past Reflections</h3>
-          <p>
-            Here’s where your saved thoughts will appear. Each reflection helps
-            you track your journey — one thought at a time.
-          </p>
-        </section>
-      </main>
-
-      <footer className="journal-footer">
-        © {new Date().getFullYear()} Reflect. All rights reserved.
-      </footer>
+        {/* --- Reflection List --- */}
+        <div className="reflection-list">
+          {filteredReflections.length > 0 ? (
+            filteredReflections.map((entry) => (
+              <div key={entry.id} className="reflection-card">
+                <div className="reflection-header">
+                  <h3>{entry.title}</h3>
+                  <span className={`mood-tag ${entry.mood}`}>{entry.mood}</span>
+                </div>
+                <p className="reflection-date">{entry.date}</p>
+                <p className="reflection-content">{entry.content}</p>
+              </div>
+            ))
+          ) : (
+            <p className="no-results">No reflections found for this filter.</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default JournalForm;
+export default ReportFilter;

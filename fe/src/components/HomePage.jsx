@@ -31,7 +31,7 @@ function HomePage() {
         <div className="section-card past-entries">
           <h2>📖 Review Past Entries</h2>
           <p>Look back at your past reflections and see your journey unfold.</p>
-          <Link to='/my-reflections' className="action-btn">View Reflections</Link>
+          <Link to='/viewreport' className="action-btn">View Reflections</Link>
         </div>
 
         <div className="section-card reports">
