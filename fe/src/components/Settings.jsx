@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import "./Settings.css";
 
 const Settings = () => {
   const [theme, setTheme] = useState("light");
+  const navigate = useNavigate();
 
   const handleThemeChange = (e) => {
     setTheme(e.target.value);
@@ -12,7 +14,11 @@ const Settings = () => {
 
   const handleExport = () => {
     alert("Your journal data is being exported...");
-    // Here you can add logic to export JSON or CSV later
+    // Later: logic for JSON or CSV export
+  };
+
+  const handleFeedbackRedirect = () => {
+    navigate("/feedback");
   };
 
   return (
@@ -33,6 +39,7 @@ const Settings = () => {
           >
             <option value="light">🌞 Light Mode</option>
             <option value="dark">🌙 Dark Mode</option>
+            <option value="sepia">📜 Sepia Mode</option>
           </select>
         </div>
 
@@ -42,6 +49,15 @@ const Settings = () => {
           <p>Download all your reflections and notes as a backup.</p>
           <button className="export-btn" onClick={handleExport}>
             ⬇️ Export Journal Data
+          </button>
+        </div>
+
+        {/* --- Feedback Section --- */}
+        <div className="settings-section">
+          <h3>Feedback</h3>
+          <p>We’d love to hear your thoughts and suggestions!</p>
+          <button className="feedback-btn" onClick={handleFeedbackRedirect}>
+            💬 Give Feedback
           </button>
         </div>
       </div>

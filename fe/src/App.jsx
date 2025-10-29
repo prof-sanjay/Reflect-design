@@ -9,6 +9,7 @@ import NewReflection from "./components/NewReflection.jsx";
 import Settings from "./components/Settings.jsx";
 import TodoList from "./components/TodoList.jsx";
 import Goals from "./components/Goals.jsx";
+import Feedback from "./components/Feedback.jsx";
 
 function App() {
   const location = useLocation();
@@ -27,7 +28,7 @@ function App() {
         <Route path="/to-do-list" element={<TodoList/>}/>
         <Route path="/settings" element={<Settings/>}/>
         <Route path="/goals" element={<Goals/>}/>
-
+        <Route path="/feedback" element={<Feedback />} />
       </Routes>
     </>
   );
