@@ -18,6 +18,52 @@ const Profile = () => {
     dob: "",
   });
 
+  // 🟩 New State for Prompts Section
+  const [prompts, setPrompts] = useState(
+    JSON.parse(localStorage.getItem("journalPrompts")) || []
+  );
+  const [newPrompt, setNewPrompt] = useState("");
+  const [editIndex, setEditIndex] = useState(null);
+  const [editText, setEditText] = useState("");
+
+  // 🟩 Add Prompt
+  const handleAddPrompt = () => {
+    if (newPrompt.trim() === "") return;
+    const updated = [...prompts, newPrompt.trim()];
+    setPrompts(updated);
+    localStorage.setItem("journalPrompts", JSON.stringify(updated));
+    setNewPrompt("");
+  };
+
+  // 🟩 Delete Prompt
+  const handleDeletePrompt = (index) => {
+    const updated = prompts.filter((_, i) => i !== index);
+    setPrompts(updated);
+    localStorage.setItem("journalPrompts", JSON.stringify(updated));
+  };
+
+  // 🟩 Edit Prompt
+  const handleEditPrompt = (index) => {
+    setEditIndex(index);
+    setEditText(prompts[index]);
+  };
+
+  // 🟩 Save Edit
+  const handleSaveEdit = (index) => {
+    const updated = [...prompts];
+    updated[index] = editText.trim();
+    setPrompts(updated);
+    localStorage.setItem("journalPrompts", JSON.stringify(updated));
+    setEditIndex(null);
+    setEditText("");
+  };
+
+  // 🟩 Cancel Edit
+  const handleCancelEdit = () => {
+    setEditIndex(null);
+    setEditText("");
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -223,6 +269,47 @@ const Profile = () => {
             Save Changes
           </button>
         </form>
+
+        {/* 🟦 Prompts Section */}
+        <div className="prompts-section">
+          <h2 className="prompts-title">My Journal Prompts</h2>
+
+          <div className="prompt-input">
+            <input
+              type="text"
+              placeholder="Add a new prompt..."
+              value={newPrompt}
+              onChange={(e) => setNewPrompt(e.target.value)}
+            />
+            <button onClick={handleAddPrompt}>Add</button>
+          </div>
+
+          <ul className="prompt-list">
+            {prompts.map((prompt, index) => (
+              <li key={index} className="prompt-item">
+                {editIndex === index ? (
+                  <>
+                    <input
+                      type="text"
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                    />
+                    <button onClick={() => handleSaveEdit(index)}>Save</button>
+                    <button onClick={handleCancelEdit}>Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    <span>{prompt}</span>
+                    <div className="prompt-actions">
+                      <button onClick={() => handleEditPrompt(index)}>✏️</button>
+                      <button onClick={() => handleDeletePrompt(index)}>🗑️</button>
+                    </div>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </>
   );
