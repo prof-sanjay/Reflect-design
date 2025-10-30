@@ -1,142 +1,116 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar.jsx";
-import "./ToDoList.css";
+import "./TodoList.css";
 
-const motivationalQuotes = [
-  "Keep it up — progress, not perfection!",
-  "You're doing amazing — one day at a time!",
-  "Stay focused — small steps lead to big wins!",
-  "Consistency beats motivation. Keep going!",
-  "You're halfway there — don’t stop now!",
-  "Believe in your effort, you’re growing stronger!"
-];
+const API_URL = "http://localhost:5000/api/tasks"; // ✅ Backend route
 
-const ToDoList = () => {
+const TodoList = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [deadline, setDeadline] = useState("");
 
-  // Load saved tasks
+  // ✅ Load tasks from MongoDB via backend
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("todoTasks")) || [];
-    setTasks(saved);
+    const fetchTasks = async () => {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        setTasks(data);
+      } catch (err) {
+        console.error("❌ Error fetching tasks:", err);
+      }
+    };
+    fetchTasks();
   }, []);
 
-  // Save to localStorage
-  useEffect(() => {
-    localStorage.setItem("todoTasks", JSON.stringify(tasks));
-  }, [tasks]);
-
-  // Add a new task with a deadline
-  const handleAddTask = () => {
+  // ✅ Add new task
+  const handleAddTask = async () => {
     if (newTask.trim() === "") return alert("Please enter a valid task.");
     if (!deadline) return alert("Please select a deadline date.");
 
     const today = new Date();
     const selectedDate = new Date(deadline);
 
-    // Validation: deadline must be after today
     if (selectedDate <= today) {
       return alert("Deadline must be after today's date!");
     }
 
-    // Calculate total days between start and deadline
-    const timeDiff = selectedDate - today;
-    const totalDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+    const totalDays = Math.ceil((selectedDate - today) / (1000 * 60 * 60 * 24));
 
     const newItem = {
-      id: Date.now(),
       text: newTask.trim(),
       completed: false,
-      editing: false,
-      totalDays: totalDays,
+      totalDays,
       currentDay: 1,
       startDate: today.toDateString(),
       deadline: selectedDate.toDateString(),
       lastUpdated: today.toDateString(),
     };
 
-    setTasks([...tasks, newItem]);
-    setNewTask("");
-    setDeadline("");
-  };
-
-  // Toggle complete
-  const toggleTask = (id) => {
-    setTasks(tasks.map(t => (t.id === id ? { ...t, completed: !t.completed } : t)));
-  };
-
-  // Delete task
-  const deleteTask = (id) => {
-    setTasks(tasks.filter(t => t.id !== id));
-  };
-
-  // Toggle edit mode
-  const toggleEdit = (id) => {
-    setTasks(tasks.map(t => (t.id === id ? { ...t, editing: !t.editing } : t)));
-  };
-
-  // Edit task text
-  const editTask = (id, newText) => {
-    setTasks(tasks.map(t => (t.id === id ? { ...t, text: newText, editing: false } : t)));
-  };
-
-  // Calculate overall progress
-  const progress = tasks.length
-    ? Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100)
-    : 0;
-
-  // Auto-increment day every new day at 12AM
-  useEffect(() => {
-    const checkMidnight = () => {
-      const today = new Date().toDateString();
-      setTasks(prev =>
-        prev.map(t => {
-          if (t.lastUpdated !== today && t.currentDay < t.totalDays) {
-            return { ...t, currentDay: t.currentDay + 1, lastUpdated: today };
-          }
-          return t;
-        })
-      );
-    };
-
-    const now = new Date();
-    const millisTillMidnight =
-      new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 1) - now;
-    const timeout = setTimeout(() => {
-      checkMidnight();
-      setInterval(checkMidnight, 24 * 60 * 60 * 1000); // every 24h
-    }, millisTillMidnight);
-
-    return () => clearTimeout(timeout);
-  }, []);
-
-  // Manually go to next day
-  const nextDayManual = (id) => {
-    setTasks(prev =>
-      prev.map(t =>
-        t.id === id && t.currentDay < t.totalDays
-          ? { ...t, currentDay: t.currentDay + 1 }
-          : t
-      )
-    );
-  };
-
-  // Motivation message (includes deadline check)
-  const getMotivation = (day, total, deadline, completed) => {
-    const today = new Date();
-    const end = new Date(deadline);
-
-    if (today > end && !completed) {
-      return "❌ Task not completed (deadline missed!)";
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newItem),
+      });
+      const data = await res.json();
+      setTasks([...tasks, data]);
+      setNewTask("");
+      setDeadline("");
+    } catch (err) {
+      console.error("❌ Error adding task:", err);
     }
-
-    const ratio = day / total;
-    if (ratio < 0.3) return "🌱 Just starting — great momentum!";
-    if (ratio < 0.6) return "🔥 You’re halfway there!";
-    if (ratio < 1) return "🚀 Almost done — finish strong!";
-    if (completed) return "🎉 Completed! Great job!";
   };
+
+  // ✅ Toggle task completion
+  const toggleTask = async (id, completed) => {
+    try {
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ completed }),
+      });
+      const updated = await res.json();
+      setTasks(tasks.map((t) => (t._id === id ? updated : t)));
+    } catch (err) {
+      console.error("❌ Error updating task:", err);
+    }
+  };
+
+  // ✅ Delete task
+  const deleteTask = async (id) => {
+    try {
+      await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      setTasks(tasks.filter((t) => t._id !== id));
+    } catch (err) {
+      console.error("❌ Error deleting task:", err);
+    }
+  };
+
+  // ✅ Edit task text
+  const editTask = async (id, newText) => {
+    try {
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: newText }),
+      });
+      const updated = await res.json();
+      setTasks(tasks.map((t) => (t._id === id ? updated : t)));
+    } catch (err) {
+      console.error("❌ Error editing task:", err);
+    }
+  };
+
+  // ✅ Toggle edit mode (frontend only)
+  const toggleEdit = (id) => {
+    setTasks(tasks.map((t) => (t._id === id ? { ...t, editing: !t.editing } : t)));
+  };
+
+  // ✅ Calculate progress
+  const progress = tasks.length
+    ? Math.round((tasks.filter((t) => t.completed).length / tasks.length) * 100)
+    : 0;
 
   return (
     <div className="todolist-page">
@@ -164,7 +138,7 @@ const ToDoList = () => {
           <button onClick={handleAddTask} className="add-btn">➕ Add</button>
         </div>
 
-        {/* Progress */}
+        {/* Progress Bar */}
         {tasks.length > 0 && (
           <>
             <div className="progress-bar">
@@ -176,20 +150,18 @@ const ToDoList = () => {
           </>
         )}
 
-        {/* Task list */}
+        {/* Task List */}
         <div className="task-list">
           {tasks.length === 0 ? (
             <p className="no-tasks">No tasks yet — start one today!</p>
           ) : (
             tasks.map((t) => (
-              <div key={t.id} className={`task-card ${t.completed ? "completed" : ""}`}>
-                
-                {/* Header with checkbox and text */}
+              <div key={t._id} className={`task-card ${t.completed ? "completed" : ""}`}>
                 <div className="task-header">
                   <input
                     type="checkbox"
                     checked={t.completed}
-                    onChange={() => toggleTask(t.id)}
+                    onChange={() => toggleTask(t._id, !t.completed)}
                     className="task-checkbox"
                   />
 
@@ -198,7 +170,7 @@ const ToDoList = () => {
                       type="text"
                       className="edit-input"
                       defaultValue={t.text}
-                      onBlur={(e) => editTask(t.id, e.target.value)}
+                      onBlur={(e) => editTask(t._id, e.target.value)}
                       autoFocus
                     />
                   ) : (
@@ -206,20 +178,16 @@ const ToDoList = () => {
                   )}
                 </div>
 
-                {/* Task timeline */}
                 <div className="timeline">
                   <p>Start: {t.startDate}</p>
                   <p>Deadline: {t.deadline}</p>
                   <p>Day {t.currentDay} / {t.totalDays}</p>
                   <p>⏳ {t.totalDays - t.currentDay} days left</p>
-                  {/* <p className="motivation">{getMotivation(t.currentDay, t.totalDays, t.deadline, t.completed)}</p> */}
                 </div>
 
-                {/* Action buttons */}
                 <div className="task-actions">
-                  {/* <button onClick={() => nextDayManual(t.id)}>📅 Next Day</button> */}
-                  <button onClick={() => toggleEdit(t.id)}>✏</button>
-                  <button onClick={() => deleteTask(t.id)}>🗑</button>
+                  <button onClick={() => toggleEdit(t._id)}>✏</button>
+                  <button onClick={() => deleteTask(t._id)}>🗑</button>
                 </div>
               </div>
             ))
@@ -230,4 +198,4 @@ const ToDoList = () => {
   );
 };
 
-export default ToDoList;
+export default TodoList;

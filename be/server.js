@@ -1,48 +1,101 @@
 import express from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Journal from "./models/Journal.js"; // ← Import the Journal model
+import Task from "./models/Task.js"; // ✅ Import the model
+import goalRoutes from "./routes/goalRoutes.js";
+
+
+
 
 dotenv.config();
+
 const app = express();
 
-app.use(cors());
-app.use(bodyParser.json());
+// ✅ Middleware
+app.use(cors({
+  origin: "http://localhost:5173", // React app URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
+app.use(express.json());
+app.use("/api/goals", goalRoutes);
+
 
 // ✅ MongoDB Connection
-mongoose
-  .connect(process.env.MONGO_URI || "mongodb://localhost:27017/reflectDB")
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(
+      process.env.MONGO_URI ||
+        "mongodb+srv://bhuvan:bhuvan25@cluster0.r2uupym.mongodb.net/todoDB?retryWrites=true&w=majority",
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }
+    );
+    console.log(`✅ MongoDB connected: ${conn.connection.host}`);
+  } catch (err) {
+    console.error("❌ MongoDB connection failed:", err.message);
+    process.exit(1);
+  }
+};
+connectDB();
 
-// ✅ Test route
+// ✅ Root route
 app.get("/", (req, res) => {
-  res.send("Reflect Backend Running ✅");
+  res.send("🚀 Reflect Todo Backend is Running Successfully");
 });
 
-// ✅ Save a new journal entry
-app.post("/api/journals", async (req, res) => {
+
+// ✅ Get all tasks
+app.get("/api/tasks", async (req, res) => {
   try {
-    const { text, mood, date } = req.body; // match frontend fields
-    const newJournal = new Journal({ text, mood, date });
-    await newJournal.save();
-    res.status(201).json(newJournal);
+    const tasks = await Task.find().sort({ createdAt: -1 });
+    res.status(200).json(tasks);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Failed to fetch tasks" });
   }
 });
 
-// ✅ Fetch all journal entries
-app.get("/api/journals", async (req, res) => {
+// ✅ Add new task
+app.post("/api/tasks", async (req, res) => {
   try {
-    const journals = await Journal.find().sort({ date: -1 }); // latest first
-    res.json(journals);
+    const task = new Task(req.body);
+    const saved = await task.save();
+    res.status(201).json(saved);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Failed to add task" });
   }
 });
 
+// ✅ Update task
+app.put("/api/tasks/:id", async (req, res) => {
+  try {
+    const updated = await Task.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    res.status(200).json(updated);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update task" });
+  }
+});
+
+// ✅ Delete task
+app.delete("/api/tasks/:id", async (req, res) => {
+  try {
+    await Task.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Task deleted" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete task" });
+  }
+});
+
+// ✅ Invalid route handler
+app.use((req, res) => {
+  res.status(404).json({ error: "Route not found" });
+});
+
+// ✅ Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Navbar from "./Navbar.jsx";
 import "./Goals.css";
 
@@ -9,69 +10,115 @@ const Goals = () => {
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [newSubgoal, setNewSubgoal] = useState("");
 
-  // Add new goal
-  const addGoal = () => {
+  const API_URL = "http://localhost:5000/api/goals";
+
+  /* =====================================
+     ✅ FETCH all goals on component load
+  ====================================== */
+  useEffect(() => {
+    fetchGoals();
+  }, []);
+
+  const fetchGoals = async () => {
+    try {
+      const res = await axios.get(API_URL);
+      setGoals(res.data);
+    } catch (err) {
+      console.error("❌ Error fetching goals:", err);
+      alert("Failed to fetch goals");
+    }
+  };
+
+  /* =====================================
+     ✅ ADD new goal
+  ====================================== */
+  const addGoal = async () => {
     if (!newGoal.trim()) return alert("Please enter a goal!");
     if (!daysToComplete || isNaN(daysToComplete) || daysToComplete <= 0)
-      return alert("Please enter a valid number of days greater than 0!");
+      return alert("Please enter valid days > 0!");
 
     const today = new Date();
     const deadline = new Date(today);
     deadline.setDate(today.getDate() + Number(daysToComplete));
 
-    const goal = {
-      id: Date.now(),
-      title: newGoal,
-      subgoals: [],
-      daysToComplete: Number(daysToComplete),
-      deadline: deadline.toISOString(),
-      completed: false,
-    };
+    try {
+      const res = await axios.post(API_URL, {
+        title: newGoal,
+        daysToComplete: Number(daysToComplete),
+        deadline: deadline.toISOString(),
+      });
 
-    setGoals([...goals, goal]);
-    setNewGoal("");
-    setDaysToComplete("");
+      setGoals([res.data, ...goals]);
+      setNewGoal("");
+      setDaysToComplete("");
+    } catch (err) {
+      console.error("❌ Error adding goal:", err);
+      alert("Failed to add goal");
+    }
   };
 
-  // Select goal
+  /* =====================================
+     ✅ ADD subgoal
+  ====================================== */
+  const addSubgoal = async (goalId) => {
+    if (!newSubgoal.trim()) return alert("Please enter a subgoal!");
+
+    try {
+      const res = await axios.post(`${API_URL}/${goalId}/subgoal`, {
+        title: newSubgoal,
+      });
+      setGoals(
+        goals.map((goal) => (goal._id === goalId ? res.data : goal))
+      );
+      setNewSubgoal("");
+    } catch (err) {
+      console.error("❌ Error adding subgoal:", err);
+      alert("Failed to add subgoal");
+    }
+  };
+
+  /* =====================================
+     ✅ TOGGLE goal completion
+  ====================================== */
+  const toggleComplete = async (goalId) => {
+    try {
+      const res = await axios.put(`${API_URL}/${goalId}/complete`);
+      setGoals(
+        goals.map((goal) => (goal._id === goalId ? res.data : goal))
+      );
+    } catch (err) {
+      console.error("❌ Error toggling goal:", err);
+      alert("Failed to update goal status");
+    }
+  };
+
+  /* =====================================
+     ✅ DELETE goal
+  ====================================== */
+  const deleteGoal = async (goalId) => {
+    const confirmed = window.confirm("Are you sure you want to delete this goal?");
+    if (!confirmed) return;
+
+    try {
+      await axios.delete(`${API_URL}/${goalId}`);
+      setGoals(goals.filter((goal) => goal._id !== goalId));
+    } catch (err) {
+      console.error("❌ Error deleting goal:", err);
+      alert("Failed to delete goal");
+    }
+  };
+
+  /* =====================================
+     ✅ SELECT goal
+  ====================================== */
   const selectGoal = (goalId) => {
     setSelectedGoal(goalId === selectedGoal ? null : goalId);
     setNewSubgoal("");
   };
 
-  // Add subgoal
-  const addSubgoal = (goalId) => {
-    if (!newSubgoal.trim()) return alert("Please enter a subgoal!");
-    const updatedGoals = goals.map((goal) =>
-      goal.id === goalId
-        ? {
-            ...goal,
-            subgoals: [...goal.subgoals, { id: Date.now(), title: newSubgoal }],
-          }
-        : goal
-    );
-    setGoals(updatedGoals);
-    setNewSubgoal("");
-  };
-
-  // Delete goal
-  const deleteGoal = (goalId) => {
-    const confirmed = window.confirm("Are you sure you want to delete this goal?");
-    if (!confirmed) return;
-    const updatedGoals = goals.filter((goal) => goal.id !== goalId);
-    setGoals(updatedGoals);
-    if (selectedGoal === goalId) setSelectedGoal(null);
-  };
-
-  // Mark goal as completed
-  const toggleComplete = (goalId) => {
-    const updatedGoals = goals.map((goal) =>
-      goal.id === goalId ? { ...goal, completed: !goal.completed } : goal
-    );
-    setGoals(updatedGoals);
-  };
-
-  // Calculate days left
+  /* =====================================
+     ✅ CALCULATE days left
+  ====================================== */
   const getDaysLeft = (deadline) => {
     const today = new Date();
     const dueDate = new Date(deadline);
@@ -79,6 +126,9 @@ const Goals = () => {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
+  /* =====================================
+     ✅ UI Rendering
+  ====================================== */
   return (
     <div className="goals-page">
       <Navbar />
@@ -119,7 +169,7 @@ const Goals = () => {
 
               return (
                 <div
-                  key={goal.id}
+                  key={goal._id}
                   className={`goal-card ${isOverdue ? "overdue" : ""} ${
                     goal.completed ? "completed" : ""
                   }`}
@@ -127,7 +177,7 @@ const Goals = () => {
                   <div className="goal-header">
                     <div
                       className="goal-title-section"
-                      onClick={() => selectGoal(goal.id)}
+                      onClick={() => selectGoal(goal._id)}
                     >
                       <span
                         className={`goal-title ${
@@ -157,20 +207,20 @@ const Goals = () => {
 
                       <button
                         className="tick-btn"
-                        onClick={() => toggleComplete(goal.id)}
+                        onClick={() => toggleComplete(goal._id)}
                       >
                         {goal.completed ? "✅" : "☐"}
                       </button>
 
                       <span
                         className="expand-icon"
-                        onClick={() => selectGoal(goal.id)}
+                        onClick={() => selectGoal(goal._id)}
                       >
-                        {selectedGoal === goal.id ? "🔽" : "▶️"}
+                        {selectedGoal === goal._id ? "🔽" : "▶️"}
                       </span>
                       <button
                         className="delete-btn"
-                        onClick={() => deleteGoal(goal.id)}
+                        onClick={() => deleteGoal(goal._id)}
                       >
                         ✖️
                       </button>
@@ -178,11 +228,11 @@ const Goals = () => {
                   </div>
 
                   {/* Subgoals */}
-                  {selectedGoal === goal.id && (
+                  {selectedGoal === goal._id && (
                     <div className="subgoal-section">
                       <ul>
-                        {goal.subgoals.map((sub) => (
-                          <li key={sub.id}>• {sub.title}</li>
+                        {goal.subgoals.map((sub, index) => (
+                          <li key={index}>• {sub.title}</li>
                         ))}
                       </ul>
 
@@ -196,7 +246,7 @@ const Goals = () => {
                         />
                         <button
                           className="subgoal-btn"
-                          onClick={() => addSubgoal(goal.id)}
+                          onClick={() => addSubgoal(goal._id)}
                         >
                           ➕ Add
                         </button>
