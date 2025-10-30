@@ -36,11 +36,11 @@
   border: 1px solid #c9b69c;
   font-size: 1rem;
   outline: none;
-  width: 60vw;
+  width: 50vw;
 }
 
 .task-input:focus {
-  border-color: #a88755;
+  border-color: #070605;
   box-shadow: 0 0 5px rgba(168, 135, 85, 0.3);
 }
 
@@ -112,4 +112,8 @@
   text-align: center;
   font-size: 1.1rem;
   margin-top: 2rem;
+}
+
+.day-input{
+  width: 5vw;
 }
