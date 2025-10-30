@@ -212,7 +212,7 @@ const ToDoList = () => {
                   <p>Deadline: {t.deadline}</p>
                   <p>Day {t.currentDay} / {t.totalDays}</p>
                   <p>⏳ {t.totalDays - t.currentDay} days left</p>
-                  <p className="motivation">{getMotivation(t.currentDay, t.totalDays, t.deadline, t.completed)}</p>
+                  {/* <p className="motivation">{getMotivation(t.currentDay, t.totalDays, t.deadline, t.completed)}</p> */}
                 </div>
 
                 {/* Action buttons */}

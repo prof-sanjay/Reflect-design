@@ -212,4 +212,27 @@
   background: #fff;
 }
 
+.completed {
+  background-color: #e0ffe0;
+  transition: 0.3s ease;
+}
+
+.strike-text {
+  text-decoration: line-through;
+  color: gray;
+}
+
+.tick-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 22px;
+  margin-right: 8px;
+  transition: transform 0.2s ease;
+}
+
+.tick-btn:hover {
+  transform: scale(1.2);
+}
+
 

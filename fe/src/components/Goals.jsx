@@ -9,13 +9,12 @@ const Goals = () => {
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [newSubgoal, setNewSubgoal] = useState("");
 
-  // Add new goal with calculated deadline
+  // Add new goal
   const addGoal = () => {
     if (!newGoal.trim()) return alert("Please enter a goal!");
     if (!daysToComplete || isNaN(daysToComplete) || daysToComplete <= 0)
       return alert("Please enter a valid number of days greater than 0!");
 
-    // Calculate deadline
     const today = new Date();
     const deadline = new Date(today);
     deadline.setDate(today.getDate() + Number(daysToComplete));
@@ -26,6 +25,7 @@ const Goals = () => {
       subgoals: [],
       daysToComplete: Number(daysToComplete),
       deadline: deadline.toISOString(),
+      completed: false,
     };
 
     setGoals([...goals, goal]);
@@ -33,7 +33,7 @@ const Goals = () => {
     setDaysToComplete("");
   };
 
-  // Select a goal
+  // Select goal
   const selectGoal = (goalId) => {
     setSelectedGoal(goalId === selectedGoal ? null : goalId);
     setNewSubgoal("");
@@ -46,10 +46,7 @@ const Goals = () => {
       goal.id === goalId
         ? {
             ...goal,
-            subgoals: [
-              ...goal.subgoals,
-              { id: Date.now(), title: newSubgoal },
-            ],
+            subgoals: [...goal.subgoals, { id: Date.now(), title: newSubgoal }],
           }
         : goal
     );
@@ -57,7 +54,7 @@ const Goals = () => {
     setNewSubgoal("");
   };
 
-  // Delete a goal
+  // Delete goal
   const deleteGoal = (goalId) => {
     const confirmed = window.confirm("Are you sure you want to delete this goal?");
     if (!confirmed) return;
@@ -66,7 +63,15 @@ const Goals = () => {
     if (selectedGoal === goalId) setSelectedGoal(null);
   };
 
-  // Helper: calculate days remaining
+  // Mark goal as completed
+  const toggleComplete = (goalId) => {
+    const updatedGoals = goals.map((goal) =>
+      goal.id === goalId ? { ...goal, completed: !goal.completed } : goal
+    );
+    setGoals(updatedGoals);
+  };
+
+  // Calculate days left
   const getDaysLeft = (deadline) => {
     const today = new Date();
     const dueDate = new Date(deadline);
@@ -81,7 +86,7 @@ const Goals = () => {
       <div className="goals-container">
         <h1 className="goals-title">🎯 Your Goals</h1>
 
-        {/* Add Goal Section */}
+        {/* Add Goal */}
         <div className="add-goal-section">
           <input
             type="text"
@@ -115,14 +120,22 @@ const Goals = () => {
               return (
                 <div
                   key={goal.id}
-                  className={`goal-card ${isOverdue ? "overdue" : ""}`}
+                  className={`goal-card ${isOverdue ? "overdue" : ""} ${
+                    goal.completed ? "completed" : ""
+                  }`}
                 >
                   <div className="goal-header">
                     <div
                       className="goal-title-section"
                       onClick={() => selectGoal(goal.id)}
                     >
-                      <span className="goal-title">{goal.title}</span>
+                      <span
+                        className={`goal-title ${
+                          goal.completed ? "strike-text" : ""
+                        }`}
+                      >
+                        {goal.title}
+                      </span>
                       <div className="goal-deadline">
                         🗓️ Deadline:{" "}
                         {new Date(goal.deadline).toLocaleDateString()} (
@@ -131,16 +144,24 @@ const Goals = () => {
                     </div>
 
                     <div className="goal-actions">
-                      {isReminder && (
+                      {isReminder && !goal.completed && (
                         <span className="reminder-badge">
                           ⏰ {daysLeft} days left
                         </span>
                       )}
-                      {isOverdue && (
+                      {isOverdue && !goal.completed && (
                         <span className="warning-badge">
                           ⚠️ Deadline passed!
                         </span>
                       )}
+
+                      <button
+                        className="tick-btn"
+                        onClick={() => toggleComplete(goal.id)}
+                      >
+                        {goal.completed ? "✅" : "☐"}
+                      </button>
+
                       <span
                         className="expand-icon"
                         onClick={() => selectGoal(goal.id)}
