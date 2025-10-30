@@ -67,3 +67,72 @@
   font-size: 0.9rem;
   margin-top: 4px;
 }
+
+.prompts-section {
+  margin-top: 40px;
+  background: #f5f5f5;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.prompts-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.prompt-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.prompt-input input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.prompt-input button {
+  padding: 8px 12px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.prompt-input button:hover {
+  background: #43a047;
+}
+
+.prompt-list {
+  list-style: none;
+  padding: 0;
+}
+
+.prompt-item {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prompt-actions button {
+  margin-left: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+
+/* Ensure text in prompts section is black */
+.prompts-section,
+.prompts-section * {
+  color: #000 !important;
+}
