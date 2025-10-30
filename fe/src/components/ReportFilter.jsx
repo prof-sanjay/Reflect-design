@@ -1,46 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar.jsx";
 import "./ReportFilter.css";
+import axios from "axios";
 
 const ReportFilter = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [mood, setMood] = useState("all");
+  const [reflections, setReflections] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // Dummy reflections (replace later with DB data)
-  const reflections = [
-    {
-      id: 1,
-      title: "Grateful Morning",
-      mood: "happy",
-      date: "2025-10-20",
-      content: "Woke up early and had a great start with yoga and gratitude journaling.",
-    },
-    {
-      id: 2,
-      title: "Tough Day",
-      mood: "sad",
-      date: "2025-10-22",
-      content: "Had a rough day, but learned to stay patient and mindful.",
-    },
-    {
-      id: 3,
-      title: "Productive Evening",
-      mood: "excited",
-      date: "2025-10-25",
-      content: "Completed all my tasks on time and felt accomplished!",
-    },
-  ];
+  // ✅ Fetch reflections from backend with filters
+  const fetchReflections = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const response = await axios.get("http://localhost:5000/api/reflections", {
+        params: { fromDate, toDate, mood },
+      });
+      setReflections(response.data);
+    } catch (err) {
+      console.error("❌ Failed to fetch reflections:", err);
+      setError("Failed to fetch reflections from server.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Filtering logic
-  const filteredReflections = reflections.filter((entry) => {
-    const entryDate = new Date(entry.date);
-    const isWithinDateRange =
-      (!fromDate || entryDate >= new Date(fromDate)) &&
-      (!toDate || entryDate <= new Date(toDate));
-    const matchesMood = mood === "all" || entry.mood === mood;
-    return isWithinDateRange && matchesMood;
-  });
+  // ✅ Re-fetch whenever filters change
+  useEffect(() => {
+    fetchReflections();
+  }, [fromDate, toDate, mood]);
 
   return (
     <div className="report-page">
@@ -84,14 +75,20 @@ const ReportFilter = () => {
 
         {/* --- Reflection List --- */}
         <div className="reflection-list">
-          {filteredReflections.length > 0 ? (
-            filteredReflections.map((entry) => (
-              <div key={entry.id} className="reflection-card">
+          {loading ? (
+            <p className="loading-text">Loading reflections...</p>
+          ) : error ? (
+            <p className="error-text">{error}</p>
+          ) : reflections.length > 0 ? (
+            reflections.map((entry) => (
+              <div key={entry._id} className="reflection-card">
                 <div className="reflection-header">
                   <h3>{entry.title}</h3>
                   <span className={`mood-tag ${entry.mood}`}>{entry.mood}</span>
                 </div>
-                <p className="reflection-date">{entry.date}</p>
+                <p className="reflection-date">
+                  {new Date(entry.date).toLocaleDateString()}
+                </p>
                 <p className="reflection-content">{entry.content}</p>
               </div>
             ))

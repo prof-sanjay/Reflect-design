@@ -4,6 +4,7 @@ import "./ReflectionEditor.css";
 const ReflectionEditor = ({ selectedDate }) => {
   const [text, setText] = useState("");
   const [mood, setMood] = useState("Neutral");
+  const [loading, setLoading] = useState(false);
 
   const moods = [
     { name: "Happy", icon: "😊" },
@@ -13,8 +14,9 @@ const ReflectionEditor = ({ selectedDate }) => {
     { name: "Anxious", icon: "😰" },
   ];
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
+
     if (!selectedDate) {
       alert("Please select a date first!");
       return;
@@ -24,8 +26,32 @@ const ReflectionEditor = ({ selectedDate }) => {
       return;
     }
 
-    alert(`Saved reflection for ${selectedDate} (Mood: ${mood})`);
-    setText("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/reflections", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          date: selectedDate,
+          text,
+          mood,
+        }),
+      });
+
+      if (response.ok) {
+        alert(`✅ Reflection saved for ${selectedDate} (Mood: ${mood})`);
+        setText("");
+        setMood("Neutral");
+      } else {
+        alert("❌ Failed to save reflection. Try again later.");
+      }
+    } catch (error) {
+      console.error("Error saving reflection:", error);
+      alert("⚠️ Could not connect to the server.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -44,6 +70,7 @@ const ReflectionEditor = ({ selectedDate }) => {
             value={text}
             onChange={(e) => setText(e.target.value)}
             maxLength={500}
+            disabled={loading}
           ></textarea>
 
           <div className="char-count">{text.length}/500</div>
@@ -57,6 +84,7 @@ const ReflectionEditor = ({ selectedDate }) => {
                   key={m.name}
                   className={`mood-btn ${mood === m.name ? "selected" : ""}`}
                   onClick={() => setMood(m.name)}
+                  disabled={loading}
                 >
                   <span className="mood-icon">{m.icon}</span>
                   <span>{m.name}</span>
@@ -65,8 +93,8 @@ const ReflectionEditor = ({ selectedDate }) => {
             </div>
           </div>
 
-          <button type="submit" className="save-btn">
-            Save Reflection
+          <button type="submit" className="save-btn" disabled={loading}>
+            {loading ? "Saving..." : "Save Reflection"}
           </button>
         </form>
       )}
