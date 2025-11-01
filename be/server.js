@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import Task from "./models/Task.js"; // ✅ Import the model
 import goalRoutes from "./routes/goalRoutes.js";
 import reflectionRoutes from "./routes/reflectionRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 
 
@@ -24,6 +25,8 @@ app.use(cors({
 app.use(express.json());
 app.use("/api/goals", goalRoutes);
 app.use("/api/reflections", reflectionRoutes);
+app.use("/api/users", userRoutes);
+
 
 
 // ✅ MongoDB Connection
