@@ -10,24 +10,20 @@ const LoginPage = ({ onLogin }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
 
-  // ✅ Use environment variable (fallback to localhost)
   const API_URL =
     import.meta.env.VITE_API_URL || "http://localhost:5000/api/users";
 
-  // ✅ Reset form fields
   const resetFields = () => {
     setUsername("");
     setPassword("");
     setConfirmPassword("");
   };
 
-  // ✅ Toggle between Login and Signup
   const handleToggle = (shouldSignup) => {
     setIsSignup(shouldSignup);
     resetFields();
   };
 
-  // ✅ Handle Signup
   const handleSignup = async (e) => {
     e.preventDefault();
 
@@ -35,6 +31,7 @@ const LoginPage = ({ onLogin }) => {
       alert("Please fill all fields!");
       return;
     }
+
     if (password !== confirmPassword) {
       alert("Passwords do not match!");
       return;
@@ -43,7 +40,7 @@ const LoginPage = ({ onLogin }) => {
     try {
       await axios.post(`${API_URL}/signup`, { username, password });
       alert("Signup successful! Please login.");
-      handleToggle(false); // Switch to login mode
+      handleToggle(false);
     } catch (error) {
       alert(
         error.response?.data?.message ||
@@ -52,7 +49,6 @@ const LoginPage = ({ onLogin }) => {
     }
   };
 
-  // ✅ Handle Login
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -62,34 +58,23 @@ const LoginPage = ({ onLogin }) => {
         password,
       });
 
-      // ✅ Save JWT + user info in localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("username", data.username);
+      localStorage.setItem("userId", data._id);
 
-      // ✅ Attach token to all future Axios requests
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
 
       if (onLogin) onLogin(data);
 
-      // ✅ Navigate to home page
       navigate("/home");
     } catch (error) {
       alert(error.response?.data?.message || "Invalid login credentials.");
     }
   };
 
-  // ✅ Optional: Logout function (if needed later)
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-    delete axios.defaults.headers.common["Authorization"];
-    navigate("/login");
-  };
-
   return (
     <div className="login-page-wrapper">
       <div className="login-container">
-        {/* Left Section */}
         <div className="login-left">
           <div className="brand-name">REFLECT</div>
           <div className="welcome-section">
@@ -98,14 +83,13 @@ const LoginPage = ({ onLogin }) => {
           </div>
         </div>
 
-        {/* Right Section */}
         <div className="login-right">
           <div className="login-box">
             <h2>{isSignup ? "Sign Up" : "Login"}</h2>
             <p className="login-subtitle">
               {isSignup
                 ? "Create an account to start your journey."
-                : "Welcome back! Login to track your mental health."}
+                : "Welcome back! Login to track your progress."}
             </p>
 
             <form onSubmit={isSignup ? handleSignup : handleLogin}>

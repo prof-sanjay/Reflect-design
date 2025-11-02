@@ -12,7 +12,7 @@ export const protect = async (req, res, next) => {
     ) {
       token = req.headers.authorization.split(" ")[1];
 
-      // ✅ Verify token
+      // ✅ Verify token using JWT_SECRET
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       // ✅ Attach user info (excluding password)
@@ -22,7 +22,8 @@ export const protect = async (req, res, next) => {
         return res.status(404).json({ message: "User not found" });
       }
 
-      next(); // ✅ Continue to the next middleware or route
+      // ✅ Continue to next middleware or route
+      next();
     } else {
       return res.status(401).json({ message: "No token provided" });
     }

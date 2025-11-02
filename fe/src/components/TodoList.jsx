@@ -9,28 +9,44 @@ const TodoList = () => {
   const [newTask, setNewTask] = useState("");
   const [deadline, setDeadline] = useState("");
 
-  // ✅ Load tasks from MongoDB via backend
+  // ✅ Get token from localStorage
+  const token = localStorage.getItem("token");
+
+  // ✅ Config for API calls (with Authorization)
+  const authConfig = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  // ✅ Fetch tasks for logged-in user
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await fetch(API_URL);
+        const res = await fetch(API_URL, {
+          method: "GET",
+          headers: authConfig.headers,
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch tasks");
         const data = await res.json();
         setTasks(data);
       } catch (err) {
         console.error("❌ Error fetching tasks:", err);
       }
     };
-    fetchTasks();
-  }, []);
 
-  // ✅ Add new task
+    if (token) fetchTasks();
+  }, [token]);
+
+  // ✅ Add a new task (user-specific)
   const handleAddTask = async () => {
     if (newTask.trim() === "") return alert("Please enter a valid task.");
     if (!deadline) return alert("Please select a deadline date.");
 
     const today = new Date();
     const selectedDate = new Date(deadline);
-
     if (selectedDate <= today) {
       return alert("Deadline must be after today's date!");
     }
@@ -50,9 +66,11 @@ const TodoList = () => {
     try {
       const res = await fetch(API_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authConfig.headers,
         body: JSON.stringify(newItem),
       });
+
+      if (!res.ok) throw new Error("Failed to add task");
       const data = await res.json();
       setTasks([...tasks, data]);
       setNewTask("");
@@ -62,14 +80,16 @@ const TodoList = () => {
     }
   };
 
-  // ✅ Toggle task completion
+  // ✅ Toggle completion
   const toggleTask = async (id, completed) => {
     try {
       const res = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: authConfig.headers,
         body: JSON.stringify({ completed }),
       });
+
+      if (!res.ok) throw new Error("Failed to update task");
       const updated = await res.json();
       setTasks(tasks.map((t) => (t._id === id ? updated : t)));
     } catch (err) {
@@ -80,7 +100,12 @@ const TodoList = () => {
   // ✅ Delete task
   const deleteTask = async (id) => {
     try {
-      await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+        headers: authConfig.headers,
+      });
+
+      if (!res.ok) throw new Error("Failed to delete task");
       setTasks(tasks.filter((t) => t._id !== id));
     } catch (err) {
       console.error("❌ Error deleting task:", err);
@@ -92,9 +117,11 @@ const TodoList = () => {
     try {
       const res = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: authConfig.headers,
         body: JSON.stringify({ text: newText }),
       });
+
+      if (!res.ok) throw new Error("Failed to edit task");
       const updated = await res.json();
       setTasks(tasks.map((t) => (t._id === id ? updated : t)));
     } catch (err) {
@@ -102,12 +129,12 @@ const TodoList = () => {
     }
   };
 
-  // ✅ Toggle edit mode (frontend only)
+  // ✅ Toggle edit mode
   const toggleEdit = (id) => {
     setTasks(tasks.map((t) => (t._id === id ? { ...t, editing: !t.editing } : t)));
   };
 
-  // ✅ Calculate progress
+  // ✅ Progress percentage
   const progress = tasks.length
     ? Math.round((tasks.filter((t) => t.completed).length / tasks.length) * 100)
     : 0;
@@ -145,7 +172,7 @@ const TodoList = () => {
               <div className="progress-fill" style={{ width: `${progress}%` }}></div>
             </div>
             <p className="progress-text">
-              {progress}% completed ({tasks.filter(t => t.completed).length}/{tasks.length})
+              {progress}% completed ({tasks.filter((t) => t.completed).length}/{tasks.length})
             </p>
           </>
         )}

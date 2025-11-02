@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 // ✅ Import all pages/components
 import LoginPage from "./components/LoginPage.jsx";
@@ -14,49 +14,116 @@ import Goals from "./components/Goals.jsx";
 import Feedback from "./components/Feedback.jsx";
 import PersonalWellnessForm from "./components/PersonalWellnessForm.jsx";
 
+// ✅ Import ProtectedRoute wrapper
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+
 function App() {
-  const location = useLocation();
-
-  // ✅ Hide navbar on login page (optional usage later)
-  const hideNavbar = location.pathname === "/" || location.pathname === "/login";
-
   return (
-    <>
-      <Routes>
-        {/* 🔐 Authentication */}
-        <Route path="/" element={<LoginPage />} />
+    <Routes>
+      {/* Public route - Login */}
+      <Route path="/" element={<LoginPage />} />
 
-        {/* 🏠 Main App Pages */}
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/my-reflections" element={<MyReflections />} />
-        <Route path="/new-reflection" element={<NewReflection />} />
-        <Route path="/viewreport" element={<ReportFilter />} />
+      {/* Protected routes */}
+      <Route
+        path="/home"
+        element={
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* 🧠 Productivity & Goals */}
-        <Route path="/to-do-list" element={<TodoList />} />
-        <Route path="/goals" element={<Goals />} />
+      <Route
+        path="/my-reflections"
+        element={
+          <ProtectedRoute>
+            <MyReflections />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* 🧍 Profile & Settings */}
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
+      <Route
+        path="/new-reflection"
+        element={
+          <ProtectedRoute>
+            <NewReflection />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* 🧘 Wellness & Feedback */}
-        <Route path="/personal-wellness" element={<PersonalWellnessForm />} />
-        <Route path="/feedback" element={<Feedback />} />
+      <Route
+        path="/viewreport"
+        element={
+          <ProtectedRoute>
+            <ReportFilter />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* 🧩 Test route (for debugging) */}
-        <Route
-          path="/test"
-          element={<h1 style={{ color: "black" }}>✅ Routing Works!</h1>}
-        />
+      <Route
+        path="/to-do-list"
+        element={
+          <ProtectedRoute>
+            <TodoList />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* 🚫 Catch-all route (optional for 404s) */}
-        <Route
-          path="*"
-          element={<h2 style={{ color: "red", textAlign: "center" }}>404 - Page Not Found</h2>}
-        />
-      </Routes>
-    </>
+      <Route
+        path="/goals"
+        element={
+          <ProtectedRoute>
+            <Goals />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/personal-wellness"
+        element={
+          <ProtectedRoute>
+            <PersonalWellnessForm />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/feedback"
+        element={
+          <ProtectedRoute>
+            <Feedback />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Fallback route for unknown paths */}
+      <Route
+        path="*"
+        element={
+          <h2 style={{ color: "red", textAlign: "center", marginTop: "2rem" }}>
+            404 - Page Not Found
+          </h2>
+        }
+      />
+    </Routes>
   );
 }
 
