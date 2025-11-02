@@ -49,9 +49,43 @@
   cursor: pointer;
   transition: 0.3s ease;
 }
+
 .goal-btn:hover {
   background-color: #f2c87d;
 }
+
+
+.edit-btn {
+  background-color: transparent;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000000;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-btn:hover {
+  background-color: #38bdf8;
+}
+
+
+.task-actions .delete-btn {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: #a30000;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.task-actions .delete-btn:hover {
+  color: #e60000;
+  transform: scale(1.2);
+}
+
+
 
 /* Goals List */
 .goals-list {
@@ -121,7 +155,6 @@
   flex: 1;
   cursor: pointer;
 }
-
 
 .add-subgoal {
   display: flex;
@@ -236,3 +269,16 @@
 }
 
 
+.task-actions .delete-btn {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: #a30000;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.task-actions .delete-btn:hover {
+  color: #e60000;
+  transform: scale(1.2);
+}

@@ -185,12 +185,6 @@ const TodoList = () => {
             tasks.map((t) => (
               <div key={t._id} className={`task-card ${t.completed ? "completed" : ""}`}>
                 <div className="task-header">
-                  <input
-                    type="checkbox"
-                    checked={t.completed}
-                    onChange={() => toggleTask(t._id, !t.completed)}
-                    className="task-checkbox"
-                  />
 
                   {t.editing ? (
                     <input
@@ -213,8 +207,14 @@ const TodoList = () => {
                 </div>
 
                 <div className="task-actions">
-                  <button onClick={() => toggleEdit(t._id)}>✏</button>
-                  <button onClick={() => deleteTask(t._id)}>🗑</button>
+                  <button onClick={() => toggleEdit(t._id)}>Edit</button>
+                    <input
+                    type="checkbox"
+                    checked={t.completed}
+                    onChange={() => toggleTask(t._id, !t.completed)}
+                    className="task-checkbox"
+                  />
+                  <button onClick={() => deleteTask(t._id)}>Delete</button>
                 </div>
               </div>
             ))
