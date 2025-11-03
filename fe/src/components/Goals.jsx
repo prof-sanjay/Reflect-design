@@ -301,7 +301,8 @@ const Goals = () => {
                       )}
 
                       {/* Delete Button */}
-                    <button className="delete-btn" onClick={() => deleteTask(t._id)}>Delete</button>
+                    <button className="delete-btn" onClick={() => deleteGoal(goal._id)}>Delete</button>
+
 
                     </div>
                   </div>
