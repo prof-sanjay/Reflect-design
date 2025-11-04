@@ -1,3 +1,4 @@
+// be/models/Goal.js
 import mongoose from "mongoose";
 
 // ✅ Subgoal Schema
@@ -13,12 +14,17 @@ const subgoalSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { _id: false } // prevents automatic _id for each subgoal
+  { _id: false }
 );
 
 // ✅ Main Goal Schema
 const goalSchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true, // linked to master table
+    },
     title: {
       type: String,
       required: [true, "Goal title is required"],
@@ -31,7 +37,7 @@ const goalSchema = new mongoose.Schema(
     daysToComplete: {
       type: Number,
       required: [true, "Days to complete is required"],
-      min: [1, "Days to complete must be at least 1"],
+      min: 1,
     },
     deadline: {
       type: Date,
@@ -45,6 +51,5 @@ const goalSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ✅ Export model
 const Goal = mongoose.model("Goal", goalSchema);
 export default Goal;

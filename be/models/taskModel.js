@@ -1,10 +1,11 @@
+// be/models/taskModel.js
 import mongoose from "mongoose";
 
 const taskSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // ✅ reference to User model
+      ref: "User",
       required: true,
     },
     text: {
@@ -24,16 +25,16 @@ const taskSchema = new mongoose.Schema(
       default: 1,
     },
     startDate: {
-      type: String,
+      type: Date,
       required: true,
     },
     deadline: {
-      type: String,
+      type: Date,
       required: true,
     },
     lastUpdated: {
-      type: String,
-      required: true,
+      type: Date,
+      default: Date.now,
     },
   },
   { timestamps: true }

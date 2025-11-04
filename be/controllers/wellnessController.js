@@ -7,7 +7,6 @@ export const saveWellnessData = async (req, res) => {
     const existing = await Wellness.findOne({ user: userId });
 
     if (existing) {
-      // update
       const updated = await Wellness.findOneAndUpdate(
         { user: userId },
         req.body,
@@ -15,7 +14,6 @@ export const saveWellnessData = async (req, res) => {
       );
       return res.status(200).json(updated);
     } else {
-      // create new
       const created = await Wellness.create({ ...req.body, user: userId });
       return res.status(201).json(created);
     }

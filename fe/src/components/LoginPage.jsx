@@ -3,78 +3,92 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./LoginPage.css";
 
+// ✅ Environment-safe API URL
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
 const LoginPage = ({ onLogin }) => {
   const [isSignup, setIsSignup] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const API_URL =
-    import.meta.env.VITE_API_URL || "http://localhost:5000/api/users";
-
+  // ✅ Reset input fields
   const resetFields = () => {
     setUsername("");
     setPassword("");
     setConfirmPassword("");
   };
 
-  const handleToggle = (shouldSignup) => {
-    setIsSignup(shouldSignup);
+  // ✅ Toggle between Login and Signup
+  const handleToggle = (toSignup) => {
+    setIsSignup(toSignup);
     resetFields();
   };
 
+  // ✅ Handle User Signup
   const handleSignup = async (e) => {
     e.preventDefault();
-
-    if (!username || !password) {
-      alert("Please fill all fields!");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
+    if (!username || !password)
+      return alert("Please fill all required fields!");
+    if (password !== confirmPassword)
+      return alert("Passwords do not match!");
 
     try {
-      await axios.post(`${API_URL}/signup`, { username, password });
+      setLoading(true);
+      await axios.post(`${API_BASE}/users/signup`, { username, password });
       alert("Signup successful! Please login.");
       handleToggle(false);
     } catch (error) {
       alert(
         error.response?.data?.message ||
-          "Signup failed. Try a different username."
+          "Signup failed. Try using a different username."
       );
+    } finally {
+      setLoading(false);
     }
   };
 
+  // ✅ Handle User Login
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    if (!username || !password)
+      return alert("Please enter both username and password.");
+
     try {
-      const { data } = await axios.post(`${API_URL}/login`, {
+      setLoading(true);
+      const { data } = await axios.post(`${API_BASE}/users/login`, {
         username,
         password,
       });
 
+      // ✅ Save user data and token in localStorage
       localStorage.setItem("token", data.token);
-      localStorage.setItem("username", data.username);
-      localStorage.setItem("userId", data._id);
+      localStorage.setItem("user", JSON.stringify(data.user));
 
+      // ✅ Set default header for future axios requests
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
 
-      if (onLogin) onLogin(data);
+      if (onLogin) onLogin(data.user);
 
+      alert("Login successful!");
       navigate("/home");
     } catch (error) {
-      alert(error.response?.data?.message || "Invalid login credentials.");
+      alert(
+        error.response?.data?.message ||
+          "Invalid credentials. Please try again."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="login-page-wrapper">
       <div className="login-container">
+        {/* 🌈 Left Section */}
         <div className="login-left">
           <div className="brand-name">REFLECT</div>
           <div className="welcome-section">
@@ -83,6 +97,7 @@ const LoginPage = ({ onLogin }) => {
           </div>
         </div>
 
+        {/* 🔐 Right Section (Form) */}
         <div className="login-right">
           <div className="login-box">
             <h2>{isSignup ? "Sign Up" : "Login"}</h2>
@@ -95,11 +110,12 @@ const LoginPage = ({ onLogin }) => {
             <form onSubmit={isSignup ? handleSignup : handleLogin}>
               <input
                 type="text"
-                placeholder="User Name"
+                placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
               />
+
               <input
                 type="password"
                 placeholder="Password"
@@ -118,8 +134,16 @@ const LoginPage = ({ onLogin }) => {
                 />
               )}
 
-              <button type="submit" className="login-btn">
-                {isSignup ? "SIGN UP" : "LOGIN"}
+              <button
+                type="submit"
+                className="login-btn"
+                disabled={loading}
+              >
+                {loading
+                  ? "Processing..."
+                  : isSignup
+                  ? "SIGN UP"
+                  : "LOGIN"}
               </button>
             </form>
 
@@ -127,8 +151,8 @@ const LoginPage = ({ onLogin }) => {
               <p>
                 {isSignup ? "Already have an account?" : "New User?"}{" "}
                 <button
-                  className="toggle-btn"
                   type="button"
+                  className="toggle-btn"
                   onClick={() => handleToggle(!isSignup)}
                 >
                   {isSignup ? "Login" : "Signup"}

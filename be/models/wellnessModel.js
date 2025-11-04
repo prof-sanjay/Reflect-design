@@ -1,10 +1,11 @@
+// be/models/wellnessModel.js
 import mongoose from "mongoose";
 
 const wellnessSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // ✅ Link to logged-in user
+      ref: "User",
       required: true,
     },
     hobbies: [String],
@@ -18,6 +19,10 @@ const wellnessSchema = new mongoose.Schema(
     stressLevel: Number,
     energyLevel: Number,
     waterIntake: Number,
+    date: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { timestamps: true }
 );

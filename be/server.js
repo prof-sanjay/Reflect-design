@@ -1,47 +1,54 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import connectDB from "./db/connection.js"; // ✅ Database connection file
-import taskRoutes from "./routes/taskRoutes.js"; // ✅ Task routes
-import goalRoutes from "./routes/goalRoutes.js";
-import reflectionRoutes from "./routes/reflectionRoutes.js";
+import connectDB from "./db/connection.js";
+
+// ✅ Import routes
 import userRoutes from "./routes/userRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
+import goalRoutes from "./routes/goalRoutes.js";
 import wellnessRoutes from "./routes/wellnessRoutes.js";
-
-
+import reflectionRoutes from "./routes/reflectionRoutes.js";
 
 // ✅ Load environment variables
 dotenv.config();
 
+// ✅ Connect to MongoDB
+connectDB();
+
 // ✅ Initialize Express app
 const app = express();
 
-// ✅ Middleware setup
+// ✅ Global Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173", // React frontend URL
+    origin: process.env.FRONTEND_URL || "http://localhost:5173", // safer for prod
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
-app.use(express.json());
 
-// ✅ Connect to MongoDB
-connectDB();
+app.use(express.json()); // Parse JSON requests
 
-// ✅ API Routes
-app.use("/api/tasks", taskRoutes);
-app.use("/api/goals", goalRoutes);
-app.use("/api/reflections", reflectionRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/wellness", wellnessRoutes);
+// ✅ Log each request (optional, but great for debugging)
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+// ✅ API Routes (Master + Transaction)
+app.use("/api/users", userRoutes);        // Master table (User)
+app.use("/api/tasks", taskRoutes);        // Transaction
+app.use("/api/goals", goalRoutes);        // Transaction
+app.use("/api/wellness", wellnessRoutes); // Transaction
+app.use("/api/reflections", reflectionRoutes); // Transaction
 
 // ✅ Root route
 app.get("/", (req, res) => {
   res.send("🚀 Reflect Todo Backend is Running Successfully");
 });
 
-// ✅ Invalid route handler
+// ✅ Handle unknown routes
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
@@ -49,5 +56,5 @@ app.use((req, res) => {
 // ✅ Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`✅ Server running at: http://localhost:${PORT}`);
 });
