@@ -3,12 +3,14 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./db/connection.js";
 
+
 // ✅ Import routes
 import userRoutes from "./routes/userRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import goalRoutes from "./routes/goalRoutes.js";
 import wellnessRoutes from "./routes/wellnessRoutes.js";
 import reflectionRoutes from "./routes/reflectionRoutes.js";
+import mediaRoutes from "./routes/mediaRoutes.js";
 
 // ✅ Load environment variables
 dotenv.config();
@@ -42,6 +44,8 @@ app.use("/api/tasks", taskRoutes);        // Transaction
 app.use("/api/goals", goalRoutes);        // Transaction
 app.use("/api/wellness", wellnessRoutes); // Transaction
 app.use("/api/reflections", reflectionRoutes); // Transaction
+app.use("/uploads", express.static("uploads")); // Serve uploaded files
+app.use("/api/media", mediaRoutes);
 
 // ✅ Root route
 app.get("/", (req, res) => {
