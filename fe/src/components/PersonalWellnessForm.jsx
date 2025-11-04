@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ for redirection
 import "./PersonalWellnessForm.css";
 import Navbar from "./Navbar.jsx";
 
+const API_URL = "http://localhost:5000/api/wellness";
+
 const PersonalWellnessForm = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    name: "",
-    gender: "",
-    dob: "",
     hobbies: [],
     sleepHours: "",
     studyHours: "",
@@ -20,9 +22,31 @@ const PersonalWellnessForm = () => {
     waterIntake: "",
   });
 
-  const hobbyOptions = ["Reading", "Music", "Sports", "Art", "Gaming", "Travel", "Cooking", "Yoga"];
+  const hobbyOptions = [
+    "Reading",
+    "Music",
+    "Sports",
+    "Art",
+    "Gaming",
+    "Travel",
+    "Cooking",
+    "Yoga",
+  ];
+
   const moods = ["Happy", "Calm", "Anxious", "Sad", "Excited", "Tired"];
 
+  // ✅ Redirect to login if token missing
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("⚠️ Please log in to access the wellness form.");
+      navigate("/"); // redirect to login page
+    } else {
+      fetchWellnessData(token);
+    }
+  }, [navigate]);
+
+  // ✅ Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -46,10 +70,68 @@ const PersonalWellnessForm = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  // ✅ Fetch existing wellness data for logged-in user
+  const fetchWellnessData = async (token) => {
+    try {
+      const res = await fetch(API_URL, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status === 401) {
+        alert("Session expired. Please log in again.");
+        localStorage.clear();
+        navigate("/");
+        return;
+      }
+
+      if (!res.ok) throw new Error("Failed to fetch wellness data");
+
+      const data = await res.json();
+      if (data) setFormData((prev) => ({ ...prev, ...data }));
+    } catch (err) {
+      console.error("❌ Error fetching wellness data:", err.message);
+    }
+  };
+
+  // ✅ Save form data to backend
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    localStorage.setItem("wellnessForm", JSON.stringify(formData));
-    alert("Your personal wellness data has been saved!");
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please login first.");
+      navigate("/");
+      return;
+    }
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.status === 401) {
+        alert("Session expired. Please log in again.");
+        localStorage.clear();
+        navigate("/");
+        return;
+      }
+
+      if (!res.ok) throw new Error("Failed to save wellness data");
+
+      alert("✅ Your wellness data has been saved successfully!");
+    } catch (err) {
+      console.error("❌ Error saving wellness data:", err.message);
+      alert("Failed to save wellness data. Please try again.");
+    }
   };
 
   return (
@@ -59,7 +141,6 @@ const PersonalWellnessForm = () => {
         <h1 className="page-title">🌿 Personal Wellness & Lifestyle Tracker</h1>
 
         <form className="wellness-form" onSubmit={handleSubmit}>
-
           {/* Hobbies */}
           <section className="form-section">
             <h2>Hobbies</h2>
@@ -147,7 +228,7 @@ const PersonalWellnessForm = () => {
             </div>
           </section>
 
-          {/* Health & Wellness Log */}
+          {/* Wellness Log */}
           <section className="form-section">
             <h2>Wellness & Health Log</h2>
             <div className="form-group">
@@ -163,7 +244,7 @@ const PersonalWellnessForm = () => {
             </div>
 
             <div className="form-group">
-              <label>Stress Level (1-10)</label>
+              <label>Stress Level (1–10)</label>
               <input
                 type="number"
                 name="stressLevel"
@@ -175,7 +256,7 @@ const PersonalWellnessForm = () => {
             </div>
 
             <div className="form-group">
-              <label>Energy Level (1-10)</label>
+              <label>Energy Level (1–10)</label>
               <input
                 type="number"
                 name="energyLevel"
@@ -198,7 +279,9 @@ const PersonalWellnessForm = () => {
             </div>
           </section>
 
-          <button type="submit" className="save-btn">💾 Save Wellness Data</button>
+          <button type="submit" className="save-btn">
+            💾 Save Wellness Data
+          </button>
         </form>
 
         {/* Preview */}

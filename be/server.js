@@ -6,6 +6,9 @@ import taskRoutes from "./routes/taskRoutes.js"; // ✅ Task routes
 import goalRoutes from "./routes/goalRoutes.js";
 import reflectionRoutes from "./routes/reflectionRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import wellnessRoutes from "./routes/wellnessRoutes.js";
+
+
 
 // ✅ Load environment variables
 dotenv.config();
@@ -31,6 +34,7 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/goals", goalRoutes);
 app.use("/api/reflections", reflectionRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/wellness", wellnessRoutes);
 
 // ✅ Root route
 app.get("/", (req, res) => {

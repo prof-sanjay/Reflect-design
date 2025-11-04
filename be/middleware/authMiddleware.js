@@ -5,7 +5,6 @@ export const protect = async (req, res, next) => {
   let token;
 
   try {
-    // ✅ Check for token in Authorization header
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")
@@ -15,20 +14,19 @@ export const protect = async (req, res, next) => {
       // ✅ Verify token using JWT_SECRET
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // ✅ Attach user info (excluding password)
+      // ✅ Attach user info to request (excluding password)
       req.user = await User.findById(decoded.id).select("-password");
 
       if (!req.user) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(401).json({ message: "User not found" });
       }
 
-      // ✅ Continue to next middleware or route
-      next();
-    } else {
-      return res.status(401).json({ message: "No token provided" });
+      return next(); // ✅ Allow request to continue
     }
+
+    return res.status(401).json({ message: "No token provided" });
   } catch (error) {
-    console.error("Auth Error:", error.message);
+    console.error("❌ Auth Middleware Error:", error.message);
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
