@@ -3,29 +3,89 @@ import Calendar from "./Calendar.jsx";
 import Navbar from "./Navbar.jsx";
 import ReflectionEditor from "./ReflectionEditor.jsx";
 import "./MyReflections.css";
-import { uploadMedia } from "../utils/api.js";
+import { uploadMedia, fetchReflections, updateReflection } from "../utils/api.js";
 
 const MyReflections = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [prompts, setPrompts] = useState([]);
-  const [moodData, setMoodData] = useState({
-    "2025-10-01": "happy",
-    "2025-10-05": "sad",
-    "2025-10-08": "calm",
-    "2025-10-15": "excited",
-    "2025-10-20": "anxious",
-  });
+  const [moodData, setMoodData] = useState({});
   const [mediaFiles, setMediaFiles] = useState([]);
-  const [uploadedMedia, setUploadedMedia] = useState([]); // ✅ For backend previews
+  const [uploadedMedia, setUploadedMedia] = useState([]);
+  const [reflectionContent, setReflectionContent] = useState("");
+  const [currentMood, setCurrentMood] = useState("neutral");
+  const [reflections, setReflections] = useState([]);
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
 
-  const handleDateSelect = (dateKey) => setSelectedDate(dateKey);
+  // 🟩 Mood color mapping
+  const getMoodColor = (mood) => {
+    const moodColors = {
+      happy: "#4ade80",
+      sad: "#60a5fa",
+      angry: "#f87171",
+      anxious: "#fbbf24",
+      calm: "#a78bfa",
+      excited: "#fb923c",
+      neutral: "#94a3b8",
+    };
+    return moodColors[mood?.toLowerCase()] || "#cbd5e1";
+  };
 
+  // 🗓 Handle date selection — also triggers reflection reload
+  const handleDateSelect = (dateKey) => {
+    setSelectedDate(dateKey);
+  };
+
+  // 🧠 Load reflection when selectedDate changes
+  useEffect(() => {
+    if (!selectedDate || reflections.length === 0) return;
+
+    const reflection = reflections.find(
+      (r) => r.date.split("T")[0] === selectedDate
+    );
+
+    if (reflection) {
+      console.log(`🟢 Loading reflection for ${selectedDate}:`, reflection);
+      setReflectionContent(reflection.content || "");
+      setCurrentMood(reflection.mood || "neutral");
+    } else {
+      console.log(`⚪ No reflection found for ${selectedDate}`);
+      setReflectionContent("");
+      setCurrentMood("neutral");
+    }
+  }, [selectedDate, reflections]);
+
+  // 🔄 Load prompts & reflections on mount
   useEffect(() => {
     const storedPrompts = JSON.parse(localStorage.getItem("journalPrompts")) || [];
     setPrompts(storedPrompts);
-  }, []);
 
-  // 📤 Handle media upload
+    const loadReflections = async () => {
+      try {
+        const data = await fetchReflections(token);
+        console.log("✅ Fetched reflections:", data);
+
+        setReflections(data);
+
+        // ✅ Map moods to date format YYYY-MM-DD
+        const moodMap = {};
+        data.forEach((entry) => {
+          if (entry.date && entry.mood) {
+            const formattedDate = entry.date.split("T")[0];
+            moodMap[formattedDate] = entry.mood.toLowerCase();
+          }
+        });
+
+        console.log("🎨 Processed mood map:", moodMap);
+        setMoodData(moodMap);
+      } catch (err) {
+        console.error("❌ Failed to load reflections:", err);
+      }
+    };
+
+    loadReflections();
+  }, [token]);
+
+  // 📤 Media upload handler
   const handleFileChange = async (e) => {
     if (!selectedDate) {
       alert("Please select a date before uploading media!");
@@ -49,18 +109,59 @@ const MyReflections = () => {
     }
   };
 
+  // 💾 Save or update reflection
+  const handleSaveReflection = async (content, mood) => {
+    if (!selectedDate) {
+      alert("Please select a date first!");
+      return;
+    }
+
+    try {
+      const response = await updateReflection({
+        date: selectedDate,
+        content,
+        mood,
+      });
+
+      console.log("✅ Reflection saved:", response);
+
+      // Update frontend state instantly
+      setReflections((prev) => {
+        const exists = prev.find((r) => r.date.split("T")[0] === selectedDate);
+        if (exists) {
+          return prev.map((r) =>
+            r.date.split("T")[0] === selectedDate ? { ...r, content, mood } : r
+          );
+        }
+        return [...prev, { date: selectedDate, content, mood }];
+      });
+
+      // Update mood color on calendar
+      setMoodData((prev) => ({
+        ...prev,
+        [selectedDate]: mood.toLowerCase(),
+      }));
+
+      setCurrentMood(mood.toLowerCase());
+      alert("✅ Reflection & mood saved!");
+    } catch (err) {
+      console.error("❌ Failed to save reflection:", err);
+      alert("Failed to save reflection.");
+    }
+  };
+
   return (
     <>
       <Navbar />
-
       <div className="my-reflections">
         <div className="reflections-layout">
-          {/* 🗓 Left — Calendar + Prompts */}
+          {/* 🗓 Calendar & Prompts */}
           <div className="calendar-section">
             <Calendar
               onDateSelect={handleDateSelect}
               selectedDate={selectedDate}
               moodData={moodData}
+              getMoodColor={getMoodColor}
             />
 
             <div className="prompts-section">
@@ -82,11 +183,19 @@ const MyReflections = () => {
             </div>
           </div>
 
-          {/* ✍️ Right — Reflection Editor + Media Upload */}
+          {/* ✍️ Reflection Editor + Media Upload */}
           <div className="reflection-editor-section">
-            <ReflectionEditor selectedDate={selectedDate} mediaFiles={uploadedMedia} />
+            <ReflectionEditor
+              key={selectedDate} // ✅ forces re-render on date change
+              selectedDate={selectedDate}
+              mediaFiles={uploadedMedia}
+              onSave={handleSaveReflection}
+              currentMood={currentMood}
+              reflectionContent={reflectionContent}
+              setReflectionContent={setReflectionContent}
+              setCurrentMood={setCurrentMood}
+            />
 
-            {/* 📸 Media Upload Section */}
             <div className="media-upload">
               <h3>Attach Media</h3>
               <input
@@ -96,7 +205,6 @@ const MyReflections = () => {
                 onChange={handleFileChange}
               />
 
-              {/* 🖼 Preview before upload */}
               <div className="media-preview">
                 {mediaFiles.map((file, index) => (
                   <div key={index} className="preview-item">
@@ -113,7 +221,6 @@ const MyReflections = () => {
                 ))}
               </div>
 
-              {/* ✅ Uploaded media preview from backend */}
               {uploadedMedia.length > 0 && (
                 <div className="uploaded-media">
                   <h4>Uploaded Media</h4>
@@ -121,11 +228,19 @@ const MyReflections = () => {
                     {uploadedMedia.map((file, index) => (
                       <div key={index}>
                         {file.path.endsWith(".mp4") ? (
-                          <video src={`http://localhost:5000${file.path}`} width="180" controls />
+                          <video
+                            src={`http://localhost:5000${file.path}`}
+                            width="180"
+                            controls
+                          />
                         ) : file.path.endsWith(".mp3") ? (
                           <audio src={`http://localhost:5000${file.path}`} controls />
                         ) : (
-                          <img src={`http://localhost:5000${file.path}`} alt={file.originalname} width="120" />
+                          <img
+                            src={`http://localhost:5000${file.path}`}
+                            alt={file.originalname}
+                            width="120"
+                          />
                         )}
                       </div>
                     ))}

@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import express from "express";
+import { getAllReflections } from "../controllers/reflectionController.js";
+
 
 const ReflectionSchema = new mongoose.Schema(
   {

@@ -1,7 +1,7 @@
 import Reflection from "../models/Reflection.js";
 
 /* ============================================================
-   CREATE or UPDATE Reflection
+   ✏️ CREATE or UPDATE Reflection
 ============================================================ */
 export const saveReflection = async (req, res) => {
   try {
@@ -48,10 +48,8 @@ export const saveReflection = async (req, res) => {
   }
 };
 
-
-
 /* ============================================================
-   GET Reflection by Date
+   📅 GET Reflection by Date
 ============================================================ */
 export const getReflectionByDate = async (req, res) => {
   try {
@@ -67,17 +65,14 @@ export const getReflectionByDate = async (req, res) => {
     }
 
     return res.status(200).json(reflection);
-
   } catch (error) {
     console.log("Get reflection error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-
-
 /* ============================================================
-   GET ALL Reflections (with STRING-BASED Filters)
+   📜 GET ALL Reflections (with Filters)
 ============================================================ */
 export const getAllReflections = async (req, res) => {
   try {
@@ -90,32 +85,67 @@ export const getAllReflections = async (req, res) => {
 
     const filter = { user: userId };
 
-    /* ---------------------------------------------------------
-       ⭐ DATE FILTER — WORKS WITH STRING DATES LIKE "2025-11-03"
-    --------------------------------------------------------- */
+    // 📆 Date filters (string-based, works well with formatted dates)
     if (fromDate || toDate) {
       filter.date = {};
-
       if (fromDate) filter.date.$gte = fromDate.trim();
       if (toDate) filter.date.$lte = toDate.trim();
     }
 
-    /* ---------------------------------------------------------
-       ⭐ MOOD FILTER — EXACT MATCH
-    --------------------------------------------------------- */
+    // 🎭 Mood filter
     if (mood && mood !== "all") {
       filter.mood = mood.trim();
     }
 
     console.log("FINAL FILTER APPLIED:", filter);
 
-    /* Fetch sorted reflections */
     const reflections = await Reflection.find(filter).sort({ date: 1 });
-
     return res.status(200).json(reflections);
 
   } catch (error) {
     console.log("Fetch reflections error:", error);
     res.status(500).json({ message: "Server error fetching reflections" });
+  }
+};
+
+/* ============================================================
+   🌈 GET All Moods (for Calendar Color Mapping)
+============================================================ */
+export const getMoods = async (req, res) => {
+  try {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+
+    const userId = req.user._id;
+    const reflections = await Reflection.find({ user: userId }).select("date mood");
+
+    return res.status(200).json(reflections);
+  } catch (error) {
+    console.log("Error fetching moods:", error);
+    res.status(500).json({ message: "Server error fetching moods" });
+  }
+};
+
+/* ============================================================
+   GET MOODS FOR ALL REFLECTION DATES (for Calendar)
+============================================================ */
+export const fetchMoods = async (req, res) => {
+  try {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+
+    const userId = req.user._id;
+
+    const reflections = await Reflection.find({ user: userId }).select("date mood");
+
+    // Create object like { "2025-11-13": "happy", "2025-11-12": "sad" }
+    const moodMap = {};
+    reflections.forEach(ref => {
+      if (ref.date && ref.mood) moodMap[ref.date] = ref.mood;
+    });
+
+    return res.status(200).json(moodMap);
+
+  } catch (error) {
+    console.log("Fetch moods error:", error);
+    res.status(500).json({ message: "Server error fetching moods" });
   }
 };

@@ -12,6 +12,8 @@ const ReflectionEditor = ({ selectedDate }) => {
     { name: "Sad", icon: "😢" },
     { name: "Angry", icon: "😠" },
     { name: "Anxious", icon: "😰" },
+    { name: "Calm", icon: "😌" },
+    { name: "Excited", icon: "🤩" },
   ];
 
   const handleSave = async (e) => {
