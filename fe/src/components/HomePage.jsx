@@ -6,7 +6,7 @@ import "./HomePage.css";
 function HomePage() {
   const [username, setUsername] = useState("User");
 
-  // Fetch profile name from backend
+  // 🔹 Fetch profile name from backend
   useEffect(() => {
     const fetchProfileName = async () => {
       try {
@@ -19,7 +19,7 @@ function HomePage() {
 
         if (response.ok) {
           const data = await response.json();
-          if (data && data.name) {
+          if (data?.name) {
             setUsername(data.name);
           }
         }
@@ -35,7 +35,7 @@ function HomePage() {
     <div className="home-page">
       <Navbar />
 
-      {/* Hero Section */}
+      {/* ================= HERO =================== */}
       <header className="home-hero">
         <h1 className="hero-title">Welcome back, {username} 🌿</h1>
         <p className="hero-subtitle">
@@ -43,8 +43,9 @@ function HomePage() {
         </p>
       </header>
 
-      {/* Section Grid */}
+      {/* ================= SECTIONS =================== */}
       <main className="home-sections">
+
         {/* New Reflection */}
         <section className="section-card new-entry">
           <h2>📝 Start a New Reflection</h2>
@@ -63,11 +64,15 @@ function HomePage() {
           </Link>
         </section>
 
-        {/* Reports */}
+        {/* Mental Insights */}
         <section className="section-card reports">
           <h2>📊 Mental Health Insights</h2>
           <p>Understand your emotional patterns and track your mental growth.</p>
-          <button className="action-btn">View Reports</button>
+
+          {/* ⭐ FIXED: Now it navigates to your Insights Dashboard */}
+          <Link to="/insights" className="action-btn">
+            View Reports
+          </Link>
         </section>
 
         {/* Personal Wellness */}
@@ -78,6 +83,7 @@ function HomePage() {
             Open Form
           </Link>
         </section>
+
       </main>
     </div>
   );

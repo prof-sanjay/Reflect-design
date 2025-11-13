@@ -1,0 +1,55 @@
+.insights-page {
+  background: #f8f6f1;
+  min-height: 100vh;
+}
+
+.insights-container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 25px;
+}
+
+.insights-title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #4a3f35;
+}
+
+.chart-card {
+  background: white;
+  padding: 20px;
+  margin: 25px 0;
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+}
+
+.chart-card h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* Heatmap */
+.heatmap table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.heatmap th, .heatmap td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.mood-cell {
+  font-weight: bold;
+  color: #444;
+}
+
+.mood-Happy { background: #ffeaa7; }
+.mood-Excited { background: #fab1a0; }
+.mood-Neutral { background: #dfe6e9; }
+.mood-Anxious { background: #81ecec; }
+.mood-Sad { background: #74b9ff; color: white; }
+.mood-Angry { background: #ff7675; color: white; }

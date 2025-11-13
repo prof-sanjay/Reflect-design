@@ -1,29 +1,38 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-// ✅ Import all pages/components
+// 🔓 Public Page
 import LoginPage from "./components/LoginPage.jsx";
+
+// 🔐 Protected Pages
 import HomePage from "./components/HomePage.jsx";
 import MyReflections from "./components/MyReflections.jsx";
-import ReportFilter from "./components/ReportFilter.jsx";
-import Profile from "./components/Profile.jsx";
 import NewReflection from "./components/NewReflection.jsx";
-import Settings from "./components/Settings.jsx";
+import ReportFilter from "./components/ReportFilter.jsx";
+import PersonalWellnessForm from "./components/PersonalWellnessForm.jsx";
+import MentalInsights from "./components/MentalInsights.jsx";
+
 import TodoList from "./components/TodoList.jsx";
 import Goals from "./components/Goals.jsx";
 import Feedback from "./components/Feedback.jsx";
-import PersonalWellnessForm from "./components/PersonalWellnessForm.jsx";
+import Profile from "./components/Profile.jsx";
+import Settings from "./components/Settings.jsx";
 
-// ✅ Import ProtectedRoute wrapper
+// 🔒 Route Protection Wrapper
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 function App() {
   return (
     <Routes>
-      {/* Public route - Login */}
+      {/* ================================
+          PUBLIC ROUTES 
+      ================================= */}
       <Route path="/" element={<LoginPage />} />
 
-      {/* Protected routes */}
+      {/* ================================
+          PROTECTED ROUTES 
+      ================================= */}
+
       <Route
         path="/home"
         element={
@@ -60,6 +69,17 @@ function App() {
         }
       />
 
+      {/* ⭐ Mental Health Visualization Dashboard */}
+      <Route
+        path="/insights"
+        element={
+          <ProtectedRoute>
+            <MentalInsights />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Productivity */}
       <Route
         path="/to-do-list"
         element={
@@ -78,6 +98,7 @@ function App() {
         }
       />
 
+      {/* User Settings */}
       <Route
         path="/profile"
         element={
@@ -96,6 +117,7 @@ function App() {
         }
       />
 
+      {/* Wellness */}
       <Route
         path="/personal-wellness"
         element={
@@ -105,6 +127,7 @@ function App() {
         }
       />
 
+      {/* Feedback */}
       <Route
         path="/feedback"
         element={
@@ -114,11 +137,20 @@ function App() {
         }
       />
 
-      {/* Fallback route for unknown paths */}
+      {/* ================================
+          404 NOT FOUND PAGE
+      ================================= */}
       <Route
         path="*"
         element={
-          <h2 style={{ color: "red", textAlign: "center", marginTop: "2rem" }}>
+          <h2
+            style={{
+              textAlign: "center",
+              marginTop: "2rem",
+              color: "red",
+              fontWeight: "bold",
+            }}
+          >
             404 - Page Not Found
           </h2>
         }
