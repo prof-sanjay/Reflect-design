@@ -1,24 +1,29 @@
-// be/models/Reflection.js
 import mongoose from "mongoose";
 
-const reflectionSchema = new mongoose.Schema(
+const ReflectionSchema = new mongoose.Schema(
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    user: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "User", 
+      required: true 
+    },
+
+    date: { 
+      type: String, 
+      required: true 
+    },
+
+    content: {           // <-- THIS MUST EXIST (not text)
+      type: String,
       required: true,
     },
-    content: {
+
+    mood: {
       type: String,
-      required: [true, "Reflection content is required"],
-    },
-    date: {
-      type: Date,
-      default: Date.now,
-    },
+      default: "Neutral",
+    }
   },
   { timestamps: true }
 );
 
-const Reflection = mongoose.model("Reflection", reflectionSchema);
-export default Reflection;
+export default mongoose.model("Reflection", ReflectionSchema);

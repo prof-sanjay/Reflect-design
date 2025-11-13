@@ -21,6 +21,7 @@ const ReflectionEditor = ({ selectedDate }) => {
       alert("Please select a date first!");
       return;
     }
+
     if (!text.trim()) {
       alert("Please write something before saving.");
       return;
@@ -31,20 +32,25 @@ const ReflectionEditor = ({ selectedDate }) => {
     try {
       const response = await fetch("http://localhost:5000/api/reflections", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // required
+        },
         body: JSON.stringify({
           date: selectedDate,
-          text,
-          mood,
+          content: text,   // <-- FIXED: backend expects "content"
+          mood: mood,
         }),
       });
+
+      const data = await response.json();
 
       if (response.ok) {
         alert(`✅ Reflection saved for ${selectedDate} (Mood: ${mood})`);
         setText("");
         setMood("Neutral");
       } else {
-        alert("❌ Failed to save reflection. Try again later.");
+        alert("❌ Failed: " + data.message);
       }
     } catch (error) {
       console.error("Error saving reflection:", error);
