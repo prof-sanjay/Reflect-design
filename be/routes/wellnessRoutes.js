@@ -1,13 +1,17 @@
 import express from "express";
 import { protect } from "../middleware/authMiddleware.js";
-import { saveWellnessData, getWellnessData } from "../controllers/wellnessController.js";
+import {
+  saveWellnessData,
+  getWellnessData,
+  getWellnessHistory
+} from "../controllers/wellnessController.js";
 
 const router = express.Router();
 
-// ✅ Save or update wellness data
 router.post("/", protect, saveWellnessData);
-
-// ✅ Get user's wellness data
 router.get("/", protect, getWellnessData);
+
+// ⭐ REQUIRED
+router.get("/history", protect, getWellnessHistory);
 
 export default router;
