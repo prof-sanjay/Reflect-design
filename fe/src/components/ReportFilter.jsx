@@ -2,28 +2,25 @@ import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar.jsx";
 import "./ReportFilter.css";
 
-/**
- * ✅ Base API URL (environment-based for easy deploy)
- */
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-/**
- * 🔐 Logout Helper
- */
+/* -------------------------
+   🔐 Logout Helper
+------------------------- */
 const handleLogout = () => {
   localStorage.clear();
   alert("Session expired. Please log in again.");
   window.location.href = "/";
 };
 
-/**
- * 🌐 Centralized API Helper — adds token automatically
- */
+/* -------------------------
+   🌐 API Helper
+------------------------- */
 const apiFetch = async (endpoint, options = {}) => {
   const token = localStorage.getItem("token");
   if (!token) return handleLogout();
 
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
+  const response = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -32,14 +29,13 @@ const apiFetch = async (endpoint, options = {}) => {
     },
   });
 
-  if (res.status === 401) handleLogout();
-  return res;
+  if (response.status === 401) handleLogout();
+  return response;
 };
 
-/**
- * 📊 ReportFilter Component
- * Displays user’s reflections filtered by date and mood.
- */
+/* ======================================================
+   📊 ReportFilter Component
+====================================================== */
 const ReportFilter = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -48,44 +44,53 @@ const ReportFilter = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  /**
-   * ✅ Fetch reflections for logged-in user with filters
-   */
+  /* ---------------------------------------------------------
+     📌 Fetch Reflections with Filters
+  ---------------------------------------------------------- */
   const fetchReflections = async () => {
     try {
       setLoading(true);
       setError("");
 
-      // Build query string dynamically
       const params = new URLSearchParams();
+
       if (fromDate) params.append("fromDate", fromDate);
       if (toDate) params.append("toDate", toDate);
       if (mood !== "all") params.append("mood", mood);
 
-      const res = await apiFetch(`/reflections?${params.toString()}`, {
-        method: "GET",
-      });
+      // 🟢 FIX: prevent sending "/reflections?" with empty parameters
+      const query = params.toString();
+      const endpoint = query ? `/reflections?${query}` : `/reflections`;
 
-      if (!res.ok) throw new Error("Failed to fetch reflections");
+      console.log("CLIENT CALLING:", endpoint);
+
+      const res = await apiFetch(endpoint);
       const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message);
+
       setReflections(data);
+
+      console.log("CLIENT RECEIVED:", data);
+
     } catch (err) {
-      console.error("❌ Error fetching reflections:", err.message);
-      setError("Failed to fetch reflections. Please try again later.");
+      console.error("Fetch error:", err.message);
+      setError("Failed to fetch reflections");
     } finally {
       setLoading(false);
     }
   };
 
-  /**
-   * 🔁 Re-fetch whenever filters change
-   */
+  /* ---------------------------------------------------------
+     🔄 Re-fetch on filter change
+  ---------------------------------------------------------- */
   useEffect(() => {
     fetchReflections();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromDate, toDate, mood]);
 
-  // 🧱 UI Rendering
+  /* ---------------------------------------------------------
+     🎨 UI Rendering
+  ---------------------------------------------------------- */
   return (
     <div className="report-page">
       <Navbar />
@@ -93,7 +98,7 @@ const ReportFilter = () => {
       <div className="report-container">
         <h1 className="report-title">📊 Reflection Reports</h1>
 
-        {/* 🎯 Filter Section */}
+        {/* 🔍 FILTERS */}
         <div className="filter-form">
           <div className="filter-item">
             <label>From:</label>
@@ -117,40 +122,39 @@ const ReportFilter = () => {
             <label>Mood:</label>
             <select value={mood} onChange={(e) => setMood(e.target.value)}>
               <option value="all">All</option>
-              <option value="happy">😊 Happy</option>
-              <option value="sad">😔 Sad</option>
-              <option value="neutral">😐 Neutral</option>
-              <option value="excited">🤩 Excited</option>
-              <option value="angry">😠 Angry</option>
+              <option value="Happy">😊 Happy</option>
+              <option value="Sad">😔 Sad</option>
+              <option value="Neutral">😐 Neutral</option>
+              <option value="Angry">😠 Angry</option>
+              <option value="Excited">🤩 Excited</option>
+              <option value="Anxious">😰 Anxious</option>
             </select>
           </div>
         </div>
 
-        {/* 🧾 Reflections List */}
+        {/* 📝 REFLECTION LIST */}
         <div className="reflection-list">
           {loading ? (
-            <p className="loading-text">Loading reflections...</p>
+            <p>Loading...</p>
           ) : error ? (
             <p className="error-text">{error}</p>
           ) : reflections.length > 0 ? (
-            reflections.map((entry) => (
-              <div key={entry._id} className="reflection-card">
+            reflections.map((r) => (
+              <div key={r._id} className="reflection-card">
                 <div className="reflection-header">
-                  <h3>{entry.title || "Untitled Reflection"}</h3>
-                  <span className={`mood-tag ${entry.mood}`}>
-                    {entry.mood || "N/A"}
-                  </span>
+                  <h3>Reflection</h3>
+                  <span className={`mood-tag mood-${r.mood}`}>{r.mood}</span>
                 </div>
+
                 <p className="reflection-date">
-                  {new Date(entry.date).toLocaleDateString()}
+                  {new Date(r.date).toLocaleDateString()}
                 </p>
-                <p className="reflection-content">
-                  {entry.content || entry.text || "No content provided."}
-                </p>
+
+                <p className="reflection-content">{r.content}</p>
               </div>
             ))
           ) : (
-            <p className="no-results">No reflections found for this filter.</p>
+            <p className="no-results">No reflections found.</p>
           )}
         </div>
       </div>

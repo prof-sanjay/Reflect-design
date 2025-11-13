@@ -1,14 +1,38 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import "./HomePage.css";
 
 function HomePage() {
-  const username = "User";
+  const [username, setUsername] = useState("User");
+
+  // Fetch profile name from backend
+  useEffect(() => {
+    const fetchProfileName = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/profile", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.name) {
+            setUsername(data.name);
+          }
+        }
+      } catch (error) {
+        console.log("Profile fetch error:", error);
+      }
+    };
+
+    fetchProfileName();
+  }, []);
 
   return (
     <div className="home-page">
-      {/* Navbar */}
       <Navbar />
 
       {/* Hero Section */}
@@ -46,7 +70,7 @@ function HomePage() {
           <button className="action-btn">View Reports</button>
         </section>
 
-        {/* ✅ Personal Wellness */}
+        {/* Personal Wellness */}
         <section className="section-card wellness">
           <h2>🌸 Personal Wellness</h2>
           <p>Check in with your habits, routines, and overall well-being.</p>

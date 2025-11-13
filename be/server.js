@@ -11,6 +11,7 @@ import goalRoutes from "./routes/goalRoutes.js";
 import wellnessRoutes from "./routes/wellnessRoutes.js";
 import reflectionRoutes from "./routes/reflectionRoutes.js";
 import mediaRoutes from "./routes/mediaRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
 
 // ✅ Load environment variables
 dotenv.config();
@@ -46,6 +47,7 @@ app.use("/api/wellness", wellnessRoutes); // Transaction
 app.use("/api/reflections", reflectionRoutes); // Transaction
 app.use("/uploads", express.static("uploads")); // Serve uploaded files
 app.use("/api/media", mediaRoutes);
+app.use("/api/profile", profileRoutes);
 
 // ✅ Root route
 app.get("/", (req, res) => {
