@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ReflectionEditor.css";
 
-const ReflectionEditor = ({ selectedDate }) => {
+const ReflectionEditor = ({ selectedDate, onReflectionSaved }) => {
   const [text, setText] = useState("");
   const [mood, setMood] = useState("Neutral");
   const [loading, setLoading] = useState(false);
@@ -15,6 +15,42 @@ const ReflectionEditor = ({ selectedDate }) => {
     { name: "Calm", icon: "😌" },
     { name: "Excited", icon: "🤩" },
   ];
+
+  // ---------------------------------------------------
+  // ⭐ NEW: Fetch reflection for selected date
+  // ---------------------------------------------------
+  useEffect(() => {
+    if (!selectedDate) return;
+
+    const fetchReflection = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/reflections/${selectedDate}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          setText("");
+          setMood("Neutral");
+          return;
+        }
+
+        const data = await res.json();
+
+        setText(data.content || "");
+        setMood(data.mood || "Neutral");
+      } catch (err) {
+        console.error("Error loading reflection:", err);
+      }
+    };
+
+    fetchReflection();
+  }, [selectedDate]);
+  // ---------------------------------------------------
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -36,11 +72,11 @@ const ReflectionEditor = ({ selectedDate }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // required
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           date: selectedDate,
-          content: text,   // <-- FIXED: backend expects "content"
+          content: text,
           mood: mood,
         }),
       });
@@ -49,8 +85,11 @@ const ReflectionEditor = ({ selectedDate }) => {
 
       if (response.ok) {
         alert(`✅ Reflection saved for ${selectedDate} (Mood: ${mood})`);
-        setText("");
-        setMood("Neutral");
+
+        // ⭐ NEW: Notify parent to refresh
+        if (onReflectionSaved) onReflectionSaved();
+
+        // ⭐ Do NOT clear text — we want to show saved reflection
       } else {
         alert("❌ Failed: " + data.message);
       }

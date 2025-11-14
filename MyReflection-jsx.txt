@@ -14,7 +14,7 @@ const MyReflections = () => {
   const [reflectionContent, setReflectionContent] = useState("");
   const [currentMood, setCurrentMood] = useState("neutral");
   const [reflections, setReflections] = useState([]);
-  const [token, setToken] = useState(localStorage.getItem("token") || ""); // ✅ load token once
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
 
   // 🟩 Mood color mapping
   const getMoodColor = (mood) => {
@@ -30,21 +30,29 @@ const MyReflections = () => {
     return moodColors[mood?.toLowerCase()] || "#cbd5e1";
   };
 
-  // 🗓 Handle date selection
+  // 🗓 Handle date selection — also triggers reflection reload
   const handleDateSelect = (dateKey) => {
     setSelectedDate(dateKey);
+  };
 
-    // Find reflection for that date
-    const reflection = reflections.find((r) => r.date.split("T")[0] === dateKey);
+  // 🧠 Load reflection when selectedDate changes
+  useEffect(() => {
+    if (!selectedDate || reflections.length === 0) return;
+
+    const reflection = reflections.find(
+      (r) => r.date.split("T")[0] === selectedDate
+    );
 
     if (reflection) {
-      setReflectionContent(reflection.content);
+      console.log(`🟢 Loading reflection for ${selectedDate}:`, reflection);
+      setReflectionContent(reflection.content || "");
       setCurrentMood(reflection.mood || "neutral");
     } else {
+      console.log(`⚪ No reflection found for ${selectedDate}`);
       setReflectionContent("");
       setCurrentMood("neutral");
     }
-  };
+  }, [selectedDate, reflections]);
 
   // 🔄 Load prompts & reflections on mount
   useEffect(() => {
@@ -101,7 +109,7 @@ const MyReflections = () => {
     }
   };
 
-  // 🧠 Save or update reflection and mood
+  // 💾 Save or update reflection
   const handleSaveReflection = async (content, mood) => {
     if (!selectedDate) {
       alert("Please select a date first!");
@@ -117,20 +125,18 @@ const MyReflections = () => {
 
       console.log("✅ Reflection saved:", response);
 
-      // Update frontend instantly
+      // Update frontend state instantly
       setReflections((prev) => {
         const exists = prev.find((r) => r.date.split("T")[0] === selectedDate);
         if (exists) {
           return prev.map((r) =>
-            r.date.split("T")[0] === selectedDate
-              ? { ...r, content, mood }
-              : r
+            r.date.split("T")[0] === selectedDate ? { ...r, content, mood } : r
           );
         }
         return [...prev, { date: selectedDate, content, mood }];
       });
 
-      // ✅ Update calendar color dynamically
+      // Update mood color on calendar
       setMoodData((prev) => ({
         ...prev,
         [selectedDate]: mood.toLowerCase(),
@@ -149,7 +155,7 @@ const MyReflections = () => {
       <Navbar />
       <div className="my-reflections">
         <div className="reflections-layout">
-          {/* 🗓 Left — Calendar + Prompts */}
+          {/* 🗓 Calendar & Prompts */}
           <div className="calendar-section">
             <Calendar
               onDateSelect={handleDateSelect}
@@ -177,9 +183,10 @@ const MyReflections = () => {
             </div>
           </div>
 
-          {/* ✍️ Right — Reflection Editor + Media Upload */}
+          {/* ✍️ Reflection Editor + Media Upload */}
           <div className="reflection-editor-section">
             <ReflectionEditor
+              key={selectedDate} // ✅ forces re-render on date change
               selectedDate={selectedDate}
               mediaFiles={uploadedMedia}
               onSave={handleSaveReflection}
@@ -189,7 +196,6 @@ const MyReflections = () => {
               setCurrentMood={setCurrentMood}
             />
 
-            {/* 📸 Media Upload Section */}
             <div className="media-upload">
               <h3>Attach Media</h3>
               <input

@@ -13,10 +13,12 @@ const MyReflections = () => {
   const [uploadedMedia, setUploadedMedia] = useState([]);
   const [reflectionContent, setReflectionContent] = useState("");
   const [currentMood, setCurrentMood] = useState("neutral");
-  const [reflections, setReflections] = useState([]);
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
 
-  // 🟩 Mood color mapping
+  // ⭐ NOW STORED AS A MAP (hash table)
+  const [reflections, setReflections] = useState({});
+  const [token] = useState(localStorage.getItem("token") || "");
+
+  // Mood Color Mapping
   const getMoodColor = (mood) => {
     const moodColors = {
       happy: "#4ade80",
@@ -30,31 +32,14 @@ const MyReflections = () => {
     return moodColors[mood?.toLowerCase()] || "#cbd5e1";
   };
 
-  // 🗓 Handle date selection — also triggers reflection reload
+  // Handle date selection
   const handleDateSelect = (dateKey) => {
     setSelectedDate(dateKey);
   };
 
-  // 🧠 Load reflection when selectedDate changes
-  useEffect(() => {
-    if (!selectedDate || reflections.length === 0) return;
-
-    const reflection = reflections.find(
-      (r) => r.date.split("T")[0] === selectedDate
-    );
-
-    if (reflection) {
-      console.log(`🟢 Loading reflection for ${selectedDate}:`, reflection);
-      setReflectionContent(reflection.content || "");
-      setCurrentMood(reflection.mood || "neutral");
-    } else {
-      console.log(`⚪ No reflection found for ${selectedDate}`);
-      setReflectionContent("");
-      setCurrentMood("neutral");
-    }
-  }, [selectedDate, reflections]);
-
-  // 🔄 Load prompts & reflections on mount
+  /* ==========================================================
+     LOAD REFLECTIONS ON MOUNT → Convert to MAP
+  ========================================================== */
   useEffect(() => {
     const storedPrompts = JSON.parse(localStorage.getItem("journalPrompts")) || [];
     setPrompts(storedPrompts);
@@ -62,54 +47,57 @@ const MyReflections = () => {
     const loadReflections = async () => {
       try {
         const data = await fetchReflections(token);
-        console.log("✅ Fetched reflections:", data);
 
-        setReflections(data);
-
-        // ✅ Map moods to date format YYYY-MM-DD
+        // Convert array → map { "2025-02-10": {content, mood} }
+        const reflectionMap = {};
         const moodMap = {};
+
         data.forEach((entry) => {
-          if (entry.date && entry.mood) {
-            const formattedDate = entry.date.split("T")[0];
-            moodMap[formattedDate] = entry.mood.toLowerCase();
-          }
+          const dateKey = entry.date.split("T")[0];
+
+          reflectionMap[dateKey] = {
+            content: entry.content || "",
+            mood: entry.mood || "neutral",
+            media: entry.media || [],
+          };
+
+          moodMap[dateKey] = entry.mood?.toLowerCase() || "neutral";
         });
 
-        console.log("🎨 Processed mood map:", moodMap);
+        setReflections(reflectionMap);
         setMoodData(moodMap);
+
+        console.log("Reflections Loaded:", reflectionMap);
       } catch (err) {
-        console.error("❌ Failed to load reflections:", err);
+        console.error("Failed to load reflections:", err);
       }
     };
 
     loadReflections();
   }, [token]);
 
-  // 📤 Media upload handler
-  const handleFileChange = async (e) => {
-    if (!selectedDate) {
-      alert("Please select a date before uploading media!");
-      return;
+  /* ==========================================================
+     WHEN SELECTED DATE CHANGES → Load its reflection instantly
+  ========================================================== */
+  useEffect(() => {
+    if (!selectedDate) return;
+
+    const entry = reflections[selectedDate];
+
+    if (entry) {
+      setReflectionContent(entry.content);
+      setCurrentMood(entry.mood);
+      setUploadedMedia(entry.media || []);
+    } else {
+      setReflectionContent("");
+      setCurrentMood("neutral");
+      setUploadedMedia([]);
     }
+  }, [selectedDate, reflections]);
 
-    const files = Array.from(e.target.files);
-    setMediaFiles(files);
-
-    const formData = new FormData();
-    files.forEach((file) => formData.append("media", file));
-    formData.append("date", selectedDate);
-
-    try {
-      const response = await uploadMedia(formData);
-      setUploadedMedia(response.files || []);
-      alert("✅ Media uploaded successfully!");
-    } catch (err) {
-      console.error("❌ Upload failed:", err);
-      alert("Failed to upload media. Please try again.");
-    }
-  };
-
-  // 💾 Save or update reflection
+  /* ==========================================================
+     SAVE / UPDATE REFLECTION
+  ========================================================== */
   const handleSaveReflection = async (content, mood) => {
     if (!selectedDate) {
       alert("Please select a date first!");
@@ -123,30 +111,65 @@ const MyReflections = () => {
         mood,
       });
 
-      console.log("✅ Reflection saved:", response);
+      console.log("Saved reflection:", response);
 
-      // Update frontend state instantly
-      setReflections((prev) => {
-        const exists = prev.find((r) => r.date.split("T")[0] === selectedDate);
-        if (exists) {
-          return prev.map((r) =>
-            r.date.split("T")[0] === selectedDate ? { ...r, content, mood } : r
-          );
-        }
-        return [...prev, { date: selectedDate, content, mood }];
-      });
+      // Instantly update UI (no refresh required)
+      setReflections((prev) => ({
+        ...prev,
+        [selectedDate]: {
+          content,
+          mood,
+          media: prev[selectedDate]?.media || [],
+        },
+      }));
 
-      // Update mood color on calendar
       setMoodData((prev) => ({
         ...prev,
         [selectedDate]: mood.toLowerCase(),
       }));
 
       setCurrentMood(mood.toLowerCase());
-      alert("✅ Reflection & mood saved!");
+
+      alert("Reflection saved!");
     } catch (err) {
-      console.error("❌ Failed to save reflection:", err);
+      console.error("Failed to save reflection:", err);
       alert("Failed to save reflection.");
+    }
+  };
+
+  /* ==========================================================
+     MEDIA UPLOAD
+  ========================================================== */
+  const handleFileChange = async (e) => {
+    if (!selectedDate) {
+      alert("Select a date before uploading media!");
+      return;
+    }
+
+    const files = Array.from(e.target.files);
+    setMediaFiles(files);
+
+    const formData = new FormData();
+    files.forEach((file) => formData.append("media", file));
+    formData.append("date", selectedDate);
+
+    try {
+      const response = await uploadMedia(formData);
+
+      setUploadedMedia(response.files || []);
+
+      // Sync with reflections map
+      setReflections((prev) => ({
+        ...prev,
+        [selectedDate]: {
+          ...prev[selectedDate],
+          media: response.files,
+        },
+      }));
+
+      alert("Media uploaded successfully!");
+    } catch (err) {
+      console.error("Upload failed:", err);
     }
   };
 
@@ -155,7 +178,8 @@ const MyReflections = () => {
       <Navbar />
       <div className="my-reflections">
         <div className="reflections-layout">
-          {/* 🗓 Calendar & Prompts */}
+
+          {/* Calendar Section */}
           <div className="calendar-section">
             <Calendar
               onDateSelect={handleDateSelect}
@@ -174,19 +198,16 @@ const MyReflections = () => {
                     </li>
                   ))
                 ) : (
-                  <li className="prompt-item">
-                    No prompts available. Add some in your profile!
-                  </li>
+                  <li>No prompts available.</li>
                 )}
               </ul>
-              <p className="goals-text">Did you check your goals?</p>
             </div>
           </div>
 
-          {/* ✍️ Reflection Editor + Media Upload */}
+          {/* Reflection Editor */}
           <div className="reflection-editor-section">
             <ReflectionEditor
-              key={selectedDate} // ✅ forces re-render on date change
+              key={selectedDate}
               selectedDate={selectedDate}
               mediaFiles={uploadedMedia}
               onSave={handleSaveReflection}
@@ -196,6 +217,7 @@ const MyReflections = () => {
               setCurrentMood={setCurrentMood}
             />
 
+            {/* Media Upload Section */}
             <div className="media-upload">
               <h3>Attach Media</h3>
               <input
@@ -205,11 +227,12 @@ const MyReflections = () => {
                 onChange={handleFileChange}
               />
 
+              {/* Selected Media Preview */}
               <div className="media-preview">
                 {mediaFiles.map((file, index) => (
                   <div key={index} className="preview-item">
                     {file.type.startsWith("image/") && (
-                      <img src={URL.createObjectURL(file)} alt="preview" width="120" />
+                      <img src={URL.createObjectURL(file)} width="120" />
                     )}
                     {file.type.startsWith("video/") && (
                       <video src={URL.createObjectURL(file)} width="180" controls />
@@ -221,6 +244,7 @@ const MyReflections = () => {
                 ))}
               </div>
 
+              {/* Uploaded Media */}
               {uploadedMedia.length > 0 && (
                 <div className="uploaded-media">
                   <h4>Uploaded Media</h4>
@@ -228,19 +252,11 @@ const MyReflections = () => {
                     {uploadedMedia.map((file, index) => (
                       <div key={index}>
                         {file.path.endsWith(".mp4") ? (
-                          <video
-                            src={`http://localhost:5000${file.path}`}
-                            width="180"
-                            controls
-                          />
+                          <video src={`http://localhost:5000${file.path}`} width="180" controls />
                         ) : file.path.endsWith(".mp3") ? (
                           <audio src={`http://localhost:5000${file.path}`} controls />
                         ) : (
-                          <img
-                            src={`http://localhost:5000${file.path}`}
-                            alt={file.originalname}
-                            width="120"
-                          />
+                          <img src={`http://localhost:5000${file.path}`} width="120" />
                         )}
                       </div>
                     ))}
@@ -249,6 +265,7 @@ const MyReflections = () => {
               )}
             </div>
           </div>
+
         </div>
       </div>
     </>
