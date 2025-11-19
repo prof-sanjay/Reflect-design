@@ -1,6 +1,6 @@
 .goals-page {
   display: flex;
-  background-color: #faf7f0;
+  background-color: #f7ebd0;
   min-height: 100vh;
 }
 
@@ -9,7 +9,7 @@
   margin-left: 80px; /* Leaves space for sidebar */
   margin-top: 65px;  /* Leaves space for topbar */
   padding: 2rem 3rem;
-  background-color: #fffdf8;
+  background-color: #ffffff;
   min-height: calc(100vh - 65px);
   transition: margin-left 0.3s ease;
   z-index: 1;
@@ -114,6 +114,8 @@
   cursor: pointer;
   color: #4a3503;
 }
+
+
 
 .expand-icon {
   font-size: 1rem;

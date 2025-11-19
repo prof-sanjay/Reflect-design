@@ -11,6 +11,7 @@ import NewReflection from "./components/NewReflection.jsx";
 import ReportFilter from "./components/ReportFilter.jsx";
 import PersonalWellnessForm from "./components/PersonalWellnessForm.jsx";
 import MentalInsights from "./components/MentalInsights.jsx";
+import AddGoal from "./components/Addgoal.jsx";
 
 import TodoList from "./components/TodoList.jsx";
 import Goals from "./components/Goals.jsx";
@@ -60,6 +61,7 @@ function App() {
         }
       />
 
+
       <Route
         path="/viewreport"
         element={
@@ -97,6 +99,9 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route path="/add-goal" element={<AddGoal/>} />
+
 
       {/* User Settings */}
       <Route
