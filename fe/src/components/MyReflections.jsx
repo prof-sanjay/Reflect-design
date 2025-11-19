@@ -137,41 +137,6 @@ const MyReflections = () => {
     }
   };
 
-  /* ==========================================================
-     MEDIA UPLOAD
-  ========================================================== */
-  const handleFileChange = async (e) => {
-    if (!selectedDate) {
-      alert("Select a date before uploading media!");
-      return;
-    }
-
-    const files = Array.from(e.target.files);
-    setMediaFiles(files);
-
-    const formData = new FormData();
-    files.forEach((file) => formData.append("media", file));
-    formData.append("date", selectedDate);
-
-    try {
-      const response = await uploadMedia(formData);
-
-      setUploadedMedia(response.files || []);
-
-      // Sync with reflections map
-      setReflections((prev) => ({
-        ...prev,
-        [selectedDate]: {
-          ...prev[selectedDate],
-          media: response.files,
-        },
-      }));
-
-      alert("Media uploaded successfully!");
-    } catch (err) {
-      console.error("Upload failed:", err);
-    }
-  };
 
   return (
     <>
@@ -216,54 +181,6 @@ const MyReflections = () => {
               setReflectionContent={setReflectionContent}
               setCurrentMood={setCurrentMood}
             />
-
-            {/* Media Upload Section */}
-            <div className="media-upload">
-              <h3>Attach Media</h3>
-              <input
-                type="file"
-                multiple
-                accept="image/*,video/*,audio/*"
-                onChange={handleFileChange}
-              />
-
-              {/* Selected Media Preview */}
-              <div className="media-preview">
-                {mediaFiles.map((file, index) => (
-                  <div key={index} className="preview-item">
-                    {file.type.startsWith("image/") && (
-                      <img src={URL.createObjectURL(file)} width="120" />
-                    )}
-                    {file.type.startsWith("video/") && (
-                      <video src={URL.createObjectURL(file)} width="180" controls />
-                    )}
-                    {file.type.startsWith("audio/") && (
-                      <audio src={URL.createObjectURL(file)} controls />
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Uploaded Media */}
-              {uploadedMedia.length > 0 && (
-                <div className="uploaded-media">
-                  <h4>Uploaded Media</h4>
-                  <div className="uploaded-grid">
-                    {uploadedMedia.map((file, index) => (
-                      <div key={index}>
-                        {file.path.endsWith(".mp4") ? (
-                          <video src={`http://localhost:5000${file.path}`} width="180" controls />
-                        ) : file.path.endsWith(".mp3") ? (
-                          <audio src={`http://localhost:5000${file.path}`} controls />
-                        ) : (
-                          <img src={`http://localhost:5000${file.path}`} width="120" />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
 
         </div>

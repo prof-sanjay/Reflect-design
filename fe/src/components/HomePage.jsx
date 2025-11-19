@@ -49,7 +49,7 @@ function HomePage() {
           <div className="glass-card new-card">
             <h2>📝 Start a New Reflection</h2>
             <p>Capture today’s thoughts and emotions in your journal.</p>
-            <Link to="/new-reflection" className="card-btn">Start Writing</Link>
+            <Link to="/my-reflections" className="card-btn">Start Writing</Link>
           </div>
 
           <div className="glass-card search-card">
