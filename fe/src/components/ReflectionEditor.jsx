@@ -141,6 +141,16 @@ const ReflectionEditor = ({ selectedDate, onReflectionSaved }) => {
     }
   };
 
+  // Check if selected date is in the future
+  const isFutureDate = () => {
+    if (!selectedDate) return false;
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
+    today.setHours(0, 0, 0, 0);
+    const selected = new Date(selectedDate);
+    return selected > today;
+  };
+
   return (
     <div className="reflection-editor">
       <h2>
@@ -151,7 +161,12 @@ const ReflectionEditor = ({ selectedDate, onReflectionSaved }) => {
 
       {selectedDate && (
         <>
-          {fetching ? (
+          {isFutureDate() ? (
+            <div className="future-date-message">
+              <p>⏳ You cannot write reflections for future dates.</p>
+              <p>Please select today or a past date.</p>
+            </div>
+          ) : fetching ? (
             <div className="loading-state">
               <p>Loading reflection...</p>
             </div>
