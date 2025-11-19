@@ -1,59 +1,64 @@
-/* ===== BASE RESET ===== */
+/* ============================================
+   PREMIUM LOGIN PAGE — SAFE GLOBAL BEHAVIOR
+============================================ */
+
+/* GLOBAL RESET — SAFE */
 body, html {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;  /* ensures full video view */
   font-family: "Poppins", sans-serif;
+
+  /* FIXED: remove dangerous overflow:hidden */
+  overflow-x: hidden;   /* prevent horizontal scroll */
+  overflow-y: auto;     /* allow scrolling everywhere */
 }
 
-/* ===== FULLSCREEN WRAPPER ===== */
+/* ============================================
+   FULLSCREEN LOGIN CONTAINER
+============================================ */
 .login-wrapper {
   position: relative;
   width: 100%;
   height: 100vh;
-
+  overflow: hidden; /* only this page locked — SAFE */
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* ===== BACKGROUND VIDEO (Perfect Fullscreen) ===== */
+/* ============================================
+   FULLSCREEN BACKGROUND VIDEO
+============================================ */
 .bg-video {
   position: fixed;
   top: 50%;
   left: 50%;
-
   width: 100vw;
   height: 100vh;
 
-  object-fit: cover;       /* ensures NO CUTTING */
-  object-position: center; /* centers video */
+  object-fit: cover;
+  object-position: center;
 
   transform: translate(-50%, -50%);
   filter: brightness(65%);
-
   z-index: -3;
-  pointer-events: none; /* ensures clicking works */
+  pointer-events: none;
 }
 
-/* ===== DARK OVERLAY ===== */
+/* Dark overlay */
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
-
+  inset: 0;
   background: rgba(0, 0, 0, 0.22);
-
-  pointer-events: none;
   z-index: -2;
+  pointer-events: none;
 }
 
-/* ===== BRAND NAME (PREMIUM FLOATING HEADER) ===== */
+/* ============================================
+   FLOATING BRAND TITLE
+============================================ */
 .brand-title {
   position: absolute;
   top: 30px;
@@ -63,15 +68,15 @@ body, html {
   font-size: 3rem;
   font-weight: 700;
   letter-spacing: 10px;
+  color: rgba(255, 255, 255, 0.9);
 
-  color: rgba(255, 255, 255, 0.88);
   text-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
-
-  font-family: "Poppins", sans-serif;
-  z-index: 12; /* above everything */
+  z-index: 20;
 }
 
-/* ===== LOGIN CARD — GLASSMORPHIC ===== */
+/* ============================================
+   GLASSMORPHIC LOGIN CARD
+============================================ */
 .login-card {
   position: relative;
   z-index: 10;
@@ -81,8 +86,6 @@ body, html {
 
   background: rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-
   border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.25);
 
@@ -93,7 +96,7 @@ body, html {
 }
 
 .login-card h2 {
-  color: #ffffff;
+  color: #fff;
   font-size: 2.2rem;
   font-weight: 700;
   margin-bottom: 0.6rem;
@@ -105,7 +108,9 @@ body, html {
   margin-bottom: 2rem;
 }
 
-/* ===== INPUT FIELDS ===== */
+/* ============================================
+   INPUT FIELDS
+============================================ */
 form {
   display: flex;
   flex-direction: column;
@@ -114,23 +119,22 @@ form {
 
 input {
   padding: 0.9rem 1rem;
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 10px;
   border: none;
-
-  background: rgba(255, 255, 255, 0.95);
   font-size: 1rem;
   outline: none;
 }
 
-/* ===== BUTTON ===== */
+/* ============================================
+   BUTTONS
+============================================ */
 .action-btn {
   padding: 1rem;
   border-radius: 12px;
-  border: none;
-
   background: #d8b892;
+  border: none;
   color: #2e2a23;
-
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
@@ -143,10 +147,10 @@ input {
   transform: scale(1.05);
 }
 
-/* ===== SIGNUP / TOGGLE ===== */
+/* Toggle */
 .toggle-text {
   margin-top: 1.4rem;
-  color: #eeeeee;
+  color: #eee;
   font-size: 0.95rem;
 }
 
@@ -154,22 +158,16 @@ input {
   background: none;
   border: none;
   color: #ffd9a6;
-  font-weight: 600;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .toggle-btn:hover {
   text-decoration: underline;
 }
 
-/* ===== ANIMATION ===== */
+/* Animation */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(25px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(25px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
