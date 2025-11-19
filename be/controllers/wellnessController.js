@@ -2,12 +2,10 @@
 import Wellness from "../models/wellnessModel.js";
 
 /* ================================
-   Helper → format today as yyyy-mm-dd
+   FIXED → correct local date
 ================================ */
 const getTodayString = () => {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d.toISOString().split("T")[0];
+  return new Date().toLocaleDateString("en-CA");  // yyyy-mm-dd LOCAL
 };
 
 /* ================================
@@ -16,9 +14,8 @@ const getTodayString = () => {
 export const saveWellnessData = async (req, res) => {
   try {
     const userId = req.user._id;
-    const date = getTodayString(); // Always save as string
+    const date = getTodayString();
 
-    // Find entry for today
     const existing = await Wellness.findOne({ user: userId, date });
 
     if (existing) {
@@ -63,7 +60,6 @@ export const getWellnessData = async (req, res) => {
 
 /* ================================
    GET FULL WELLNESS HISTORY
-   Required for Insights page
 ================================ */
 export const getWellnessHistory = async (req, res) => {
   try {
@@ -78,3 +74,4 @@ export const getWellnessHistory = async (req, res) => {
     return res.status(500).json({ message: "Failed to fetch history" });
   }
 };
+
