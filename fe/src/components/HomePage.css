@@ -1,131 +1,202 @@
-/* --- Global Reset --- */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Poppins', sans-serif;
-}
+/* =====================================================
+   HOMEPAGE ONLY — SAFE, NO GLOBAL IMPACT
+===================================================== */
 
-/* --- Page Layout --- */
-.home-page {
-  background-color: #f5efe6;
-  min-height: 100vh;
+/* MAIN WRAPPER */
+.homepage-wrapper {
+  width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  margin-left: 70px;
+
+  padding-left: 80px; /* space for sidebar */
+
+  background: linear-gradient(
+      rgba(255, 255, 255, 0.45),
+      rgba(255, 255, 255, 0.65)
+    ),
+    url("/videos/bg-home.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-/* --- Hero Section --- */
-.home-hero {
-  background: linear-gradient(135deg, #d8b892 10%, #a18058 90%);
-  padding: 4rem 2rem;
+/* =====================================================
+   SCROLLABLE MAIN CONTENT (THE FIX)
+===================================================== */
+.main-scroll-area {
+  margin-top: 66px;                 /* height of topbar */
+  height: calc(100vh - 66px);       /* full usable height */
+  overflow-y: auto;                 /* enable scroll */
+  overflow-x: hidden;
+
+  padding: 0 2rem;
+  padding-bottom: 5rem;             /* IMPORTANT: bottom space */
+}
+
+/* Hide scrollbar (optional aesthetic) */
+.main-scroll-area::-webkit-scrollbar {
+  width: 0;
+}
+
+/* =====================================================
+   HERO SECTION — Premium Look
+===================================================== */
+.hero {
+  background: linear-gradient(135deg, #d9b993 10%, #a17f58 90%);
+  padding: 2.5rem 2rem;             /* reduced height */
   text-align: center;
-  color: #2e2a23;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 40px 40px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.22);
+  margin-bottom: 2rem;
 }
 
 .hero-title {
-  font-size: 2.6rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #2d2820;
   letter-spacing: 0.5px;
 }
 
 .hero-subtitle {
+  margin-top: 0.8rem;
   font-size: 1.2rem;
   color: #3b2f2f;
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
-/* --- Section Grid --- */
-.home-sections {
+/* =====================================================
+   GRID (2×2 or Auto)
+===================================================== */
+.card-grid {
+  padding: 2rem 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  padding: 3rem 4rem;
+  gap: 2.5rem;
+
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+
+  padding-bottom: 3rem; /* keep bottom space */
 }
 
-/* --- Section Card --- */
-.section-card {
-  background-color: #ffffff;
-  border-radius: 18px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+/* =====================================================
+   GLASS CARDS (Premium)
+===================================================== */
+.glass-card {
+  padding: 2.5rem;
+  border-radius: 25px;
+  text-align: center;
+
+  background: rgba(255, 255, 255, 0.20);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 20px 45px rgba(0,0,0,0.18);
+
+  transition: all 0.35s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+}
+
+/* HEADINGS */
+.glass-card h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #2d2925;
+}
+
+/* TEXT */
+.glass-card p {
+  font-size: 1.1rem;
+  color: #6d5f53;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+/* ACCENT COLOR BORDERS */
+.new-card { border-top: 6px solid #d8b892; }
+.search-card { border-top: 6px solid #a18058; }
+.insights-card { border-top: 6px solid #786d5b; }
+.wellness-card {
+  border-top: 6px solid #4caf50;
+  background: rgba(232, 247, 235, 0.25);
+}
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+.card-btn {
+  padding: 0.9rem 2rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #d8b892, #c7a179);
+
+  text-decoration: none;
+  color: #2e2a23;
+  font-weight: 600;
+
+  transition: 0.25s ease;
+}
+
+.card-btn:hover {
+  transform: scale(1.08);
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media (max-width: 900px) {
+  .hero-title {
+    font-size: 2.3rem;
+  }
+  .card-grid {
+    padding: 1rem;
+  }
+}
+
+/* SCROLL AREA */
+.main-scroll-area {
+  margin-top: 66px;
+  height: calc(100vh - 66px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 2rem 4rem 2rem;
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #d9b993 10%, #a17f58 90%);
   padding: 2.5rem 2rem;
   text-align: center;
-  border-left: 6px solid transparent;
-  transition: all 0.3s ease;
-  transform: translateY(0);
+  border-radius: 0 0 40px 40px;
+  margin-bottom: 2rem;
 }
 
-.section-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+/* ⭐⭐⭐ FIXED 2x2 GRID ⭐⭐⭐ */
+.card-grid {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* 2 columns */
+  grid-template-rows: auto auto;   /* 2 rows */
+  gap: 2.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding-bottom: 3rem;
 }
 
-.section-card h2 {
-  color: #3b2f2f;
-  font-size: 1.6rem;
-  margin-bottom: 1rem;
-}
+/* GLASS CARD (unchanged) */
+.glass-card {
+  padding: 2.5rem;
+  border-radius: 25px;
+  text-align: center;
 
-.section-card p {
-  color: #6d5f53;
-  margin-bottom: 1.8rem;
-  font-size: 1rem;
-}
+  background: rgba(255, 255, 255, 0.20);
+  backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
 
-/* --- Accent Colors --- */
-.new-entry {
-  border-left-color: #d8b892;
-}
-
-.past-entries {
-  border-left-color: #a18058;
-}
-
-.reports {
-  border-left-color: #786d5b;
-}
-
-/* ✅ Personal Wellness (New) */
-.wellness {
-  border-left-color: #4caf50;
-  background: #e7f6ec;
-}
-
-.wellness:hover {
-  transform: scale(1.03);
-  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
-}
-
-/* --- Buttons --- */
-.action-btn {
-  padding: 0.8rem 1.6rem;
-  background-color: #d8b892;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  color: #2e2a23;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.action-btn:hover {
-  background-color: #c9a97f;
-  transform: scale(1.05);
-}
-
-/* --- Responsive --- */
-@media (max-width: 768px) {
-  .home-hero {
-    padding: 3rem 1.5rem;
-  }
-
-  .hero-title {
-    font-size: 2rem;
-  }
-
-  .home-sections {
-    padding: 2rem;
-  }
+  box-shadow: 0 20px 45px rgba(0,0,0,0.18);
+  transition: all 0.35s ease;
 }

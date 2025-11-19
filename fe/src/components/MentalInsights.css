@@ -1,156 +1,104 @@
-/* ---------------------------------------------------
-   🌿 REFLECT THEME — Mental Health Insights
-------------------------------------------------------*/
-
 .insights-page {
-  background: #f7efe6;
+  background: #f9f4ee;
   min-height: 100vh;
   padding-bottom: 40px;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  font-family: "Inter", sans-serif;
 }
 
 .insights-container {
-  max-width: 1050px;
-  margin: 25px auto;
-  padding: 0 16px;
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
 }
 
-/* TITLE */
 .insights-title {
-  font-size: 28px;
   text-align: center;
-  margin-bottom: 20px;
+  font-size: 32px;
+  margin-bottom: 25px;
   color: #3b2f2f;
   font-weight: 700;
 }
 
-/* ---------------------------------------------------
-   SUMMARY GRID
-------------------------------------------------------*/
+/* SUMMARY */
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 25px;
+  gap: 16px;
+  margin-bottom: 30px;
 }
 
 .summary-card {
-  background: #f2e6d5;
+  background: #fff9f3;
+  border-radius: 16px;
   padding: 18px;
-  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
   text-align: center;
-  box-shadow: 0 6px 18px rgba(160, 130, 95, 0.1);
   border: 1px solid #e8d7c3;
 }
 
 .summary-card h3 {
-  margin: 0;
-  color: #6b5a48;
   font-size: 14px;
+  color: #6b5a48;
 }
 
 .summary-card p {
-  margin-top: 8px;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
-  color: #3b2f2f;
 }
 
-/* ---------------------------------------------------
-   CHART CARDS
-------------------------------------------------------*/
+/* CHART CARD */
 .chart-card {
-  background: #ffffff;
-  border-radius: 16px;
+  background: white;
   padding: 20px;
-  margin-bottom: 28px;
-  box-shadow: 0 6px 22px rgba(150, 110, 80, 0.12);
-  border: 1px solid #ecd9c7;
+  border-radius: 18px;
+  margin-bottom: 30px;
+  border: 1px solid #e9dccb;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
 }
 
-.chart-card h2 {
-  margin-bottom: 14px;
-  font-size: 18px;
-  color: #3b2f2f;
-  font-weight: 600;
-}
-
-/* ---------------------------------------------------
-   HEATMAP
-------------------------------------------------------*/
-
-.heatmap-grid {
-  overflow-x: auto;
-  margin-top: 12px;
-}
-
-.heatmap-grid table {
+/* HEATMAP POWER BI */
+.heatmap-grid-adv table {
   width: 100%;
   border-collapse: collapse;
-  text-align: center;
 }
 
-.heatmap-grid th,
-.heatmap-grid td {
-  padding: 10px;
-  border: 1px solid #e8d7c3;
-  font-size: 13px;
-}
-
-.heatmap-grid th {
+.heatmap-grid-adv th {
   background: #f2e6d5;
-  color: #3b2f2f;
+  padding: 10px;
   font-weight: 600;
 }
 
-/* ---------------------------------------------------
-   HEATMAP COLORS FOR MOODS
-------------------------------------------------------*/
-
-.heat-cell {
-  background: #fff;
-  font-weight: 600;
-  text-transform: capitalize;
+.heatmap-grid-adv td {
+  padding: 18px 6px;
+  text-align: center;
+  color: #2a2a2a;
 }
 
-/* calm / neutral tones */
-.mood-Happy   { background: #ffe8b3; color: #73510a; }
-.mood-Excited { background: #ffe0a0; color: #8a5500; }
-.mood-Calm    { background: #f3e2c2; color: #7d6a46; }
-
-/* negative moods */
-.mood-Sad     { background: #eed5d5; color: #6b3030; }
-.mood-Anxious { background: #eedec7; color: #704c1b; }
-.mood-Tired   { background: #e6dccb; color: #5d4f3c; }
-
-/* empty slots */
-.mood-undefined,
-.mood-null,
-.mood-- {
-  background: #faf7f2;
-  color: #aaa;
+.week-col {
+  background: #fbeedb;
+  font-weight: 700;
 }
 
-/* ---------------------------------------------------
-   MOBILE RESPONSIVE
-------------------------------------------------------*/
-
-@media (max-width: 820px) {
-  .summary-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.heat-cell-adv {
+  min-width: 90px;
+  height: 80px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 12px;
+  position: relative;
+  transition: transform 0.15s ease;
 }
 
-@media (max-width: 520px) {
-  .summary-grid {
-    grid-template-columns: 1fr;
-  }
+.heat-cell-adv:hover {
+  transform: scale(1.08);
+}
 
-  .chart-card {
-    padding: 16px;
-  }
+.mood-label {
+  font-weight: 700;
+  font-size: 14px;
+}
 
-  .insights-title {
-    font-size: 22px;
-  }
+.date-label {
+  opacity: 0.9;
+  margin-top: 6px;
 }

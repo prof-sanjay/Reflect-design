@@ -3,164 +3,167 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./LoginPage.css";
 
-// ✅ Environment-safe API URL
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const LoginPage = ({ onLogin }) => {
-  const [isSignup, setIsSignup] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // ✅ Reset input fields
-  const resetFields = () => {
-    setUsername("");
-    setPassword("");
-    setConfirmPassword("");
+  const [isSignup, setIsSignup] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [form, setForm] = useState({
+    username: "",
+    password: "",
+    confirmPassword: ""
+  });
+
+  /** =========================
+   * Handle Input Change
+   * =========================*/
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
   };
 
-  // ✅ Toggle between Login and Signup
-  const handleToggle = (toSignup) => {
-    setIsSignup(toSignup);
-    resetFields();
+  /** =========================
+   * Toggle Login / Signup
+   * =========================*/
+  const handleToggle = () => {
+    setIsSignup((prev) => !prev);
+    setForm({ username: "", password: "", confirmPassword: "" });
   };
 
-  // ✅ Handle User Signup
+  /** =========================
+   * Signup Handler
+   * =========================*/
   const handleSignup = async (e) => {
     e.preventDefault();
-    if (!username || !password)
-      return alert("Please fill all required fields!");
-    if (password !== confirmPassword)
-      return alert("Passwords do not match!");
+
+    if (!form.username || !form.password)
+      return alert("Please fill all fields");
+
+    if (form.password !== form.confirmPassword)
+      return alert("Passwords do not match");
 
     try {
       setLoading(true);
-      await axios.post(`${API_BASE}/users/signup`, { username, password });
+
+      await axios.post(`${API_BASE}/users/signup`, {
+        username: form.username,
+        password: form.password,
+      });
+
       alert("Signup successful! Please login.");
-      handleToggle(false);
-    } catch (error) {
-      alert(
-        error.response?.data?.message ||
-          "Signup failed. Try using a different username."
-      );
+      handleToggle();
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Handle User Login
+  /** =========================
+   * Login Handler
+   * =========================*/
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!username || !password)
-      return alert("Please enter both username and password.");
+    if (!form.username || !form.password)
+      return;
 
     try {
       setLoading(true);
+
       const { data } = await axios.post(`${API_BASE}/users/login`, {
-        username,
-        password,
+        username: form.username,
+        password: form.password,
       });
 
-      // ✅ Save user data and token in localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // ✅ Set default header for future axios requests
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
 
       if (onLogin) onLogin(data.user);
 
-      alert("Login successful!");
       navigate("/home");
-    } catch (error) {
-      alert(
-        error.response?.data?.message ||
-          "Invalid credentials. Please try again."
-      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="login-page-wrapper">
-      <div className="login-container">
-        {/* 🌈 Left Section */}
-        <div className="login-left">
-          <div className="brand-name">REFLECT</div>
-          <div className="welcome-section">
-            <h1>Welcome to Reflect</h1>
-            <p>“Your thoughts shape your tomorrow. Reflect today.”</p>
-          </div>
-        </div>
+    <div className="login-wrapper">
 
-        {/* 🔐 Right Section (Form) */}
-        <div className="login-right">
-          <div className="login-box">
-            <h2>{isSignup ? "Sign Up" : "Login"}</h2>
-            <p className="login-subtitle">
-              {isSignup
-                ? "Create an account to start your journey."
-                : "Welcome back! Login to track your progress."}
-            </p>
+      {/* ====== Background Video ====== */}
+      <video autoPlay muted loop playsInline className="bg-video">
+        <source src="/videos/bg.mp4" type="video/mp4" />
+      </video>
 
-            <form onSubmit={isSignup ? handleSignup : handleLogin}>
-              <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
+      {/* Dark overlay */}
+      <div className="overlay"></div>
 
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+      {/* Brand Title */}
+      <div className="brand-title">REFLECT</div>
 
-              {isSignup && (
-                <input
-                  type="password"
-                  placeholder="Confirm Password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
-              )}
+      {/* ====== Login / Signup Card ====== */}
+      <div className="login-card fade-in">
 
-              <button
-                type="submit"
-                className="login-btn"
-                disabled={loading}
-              >
-                {loading
-                  ? "Processing..."
-                  : isSignup
-                  ? "SIGN UP"
-                  : "LOGIN"}
-              </button>
-            </form>
+        <h2>{isSignup ? "Create Account" : "Welcome Back"}</h2>
 
-            <div className="links">
-              <p>
-                {isSignup ? "Already have an account?" : "New User?"}{" "}
-                <button
-                  type="button"
-                  className="toggle-btn"
-                  onClick={() => handleToggle(!isSignup)}
-                >
-                  {isSignup ? "Login" : "Signup"}
-                </button>
-              </p>
-            </div>
-          </div>
-        </div>
+        <p className="subtitle">
+          {isSignup
+            ? "Start your Reflect journey today"
+            : "Log in to continue"}
+        </p>
+
+        <form onSubmit={isSignup ? handleSignup : handleLogin}>
+
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={form.username}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
+
+          {isSignup && (
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              value={form.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          )}
+
+          <button className="action-btn" type="submit" disabled={loading}>
+            {loading
+              ? "Processing..."
+              : isSignup
+              ? "Sign Up"
+              : "Login"}
+          </button>
+        </form>
+
+        <p className="toggle-text">
+          {isSignup ? "Already have an account?" : "New here?"}{" "}
+          <button onClick={handleToggle} className="toggle-btn">
+            {isSignup ? "Login" : "Sign Up"}
+          </button>
+        </p>
+
       </div>
     </div>
   );

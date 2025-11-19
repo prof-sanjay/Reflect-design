@@ -1,124 +1,78 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import "./Navbar.css";
-import Settings from "./Settings.jsx";
-import TodoList from "./TodoList.jsx";
-
 
 const Navbar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  const handleMouseEnter = () => setIsExpanded(true);
-  const handleMouseLeave = () => setIsExpanded(false);
   const toggleMobile = () => setIsMobileOpen(!isMobileOpen);
-  const closeMobile = () => setIsMobileOpen(false);
 
   return (
     <>
-      {/* --- Top bar --- */}
+      {/* TOPBAR */}
       <header className="topbar">
         <div className="hamburger" onClick={toggleMobile}>
-          <div className={`bar ${isMobileOpen ? "open" : ""}`} />
-          <div className={`bar ${isMobileOpen ? "open" : ""}`} />
-          <div className={`bar ${isMobileOpen ? "open" : ""}`} />
+          <span className={`bar ${isMobileOpen ? "open" : ""}`}></span>
+          <span className={`bar ${isMobileOpen ? "open" : ""}`}></span>
+          <span className={`bar ${isMobileOpen ? "open" : ""}`}></span>
         </div>
 
-        <Link to="/reflect" className="navbar-logo">
-          Reflect
-        </Link>
+        <Link to="/home" className="app-title">Reflect</Link>
       </header>
 
-      {/* --- Sidebar --- */}
+      {/* SIDEBAR */}
       <aside
-        className={`sidebar ${isExpanded ? "expanded" : ""} ${
-          isMobileOpen ? "mobile-open" : ""
-        }`}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        className={`sidebar 
+          ${isExpanded ? "expanded" : ""} 
+          ${isMobileOpen ? "mobile-open" : ""}`}
+        onMouseEnter={() => setIsExpanded(true)}
+        onMouseLeave={() => setIsExpanded(false)}
       >
-        <nav className="nav-links">
-          <NavLink
-            to="/home"
-            className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
-            }
-            onClick={closeMobile}
-            end
-          >
+        {/* TOP NAV */}
+        <nav className="nav-section">
+          <NavLink to="/home" className="nav-item">
             <span className="icon">🏠</span>
-            <span className="label">Home</span>
+            <span className="text">Home</span>
           </NavLink>
 
-          <NavLink
-            to="/my-reflections"
-            className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
-            }
-            onClick={closeMobile}
-          >
+          <NavLink to="/my-reflections" className="nav-item">
             <span className="icon">🪞</span>
-            <span className="label">Reflections</span>
+            <span className="text">Reflections</span>
           </NavLink>
 
-          <NavLink
-             to="/To-do-list"
-             className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
-             }
-             onClick={closeMobile}
-          >
+          <NavLink to="/To-do-list" className="nav-item">
             <span className="icon">✅</span>
-            <span className="label">To-Do List</span>
+            <span className="text">To-Do List</span>
           </NavLink>
 
-          <NavLink
-              to="/goals"
-              className={({ isActive }) =>
-                isActive ? "nav-link active" : "nav-link"
-              }
-              onClick={closeMobile}
-            >
-              <span className="icon">🎯</span>
-              <span className="label">Goals</span>
+          <NavLink to="/goals" className="nav-item">
+            <span className="icon">🎯</span>
+            <span className="text">Goals</span>
           </NavLink>
-
-
-
         </nav>
 
-        {/* --- Bottom Links --- */}
-        <div className="bottom-links">
-           <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
-            }
-            onClick={closeMobile}
-          >
+        {/* BOTTOM NAV */}
+        <nav className="nav-section bottom">
+          <NavLink to="/profile" className="nav-item">
             <span className="icon">👤</span>
-            <span className="label">Profile</span>
-          </NavLink>
-          <NavLink
-            to="/settings"
-            className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
-            }
-            onClick={closeMobile}
-          >
-            <span className="icon">⚙️</span>
-            <span className="label">Settings</span>
+            <span className="text">Profile</span>
           </NavLink>
 
-          <Link to="/" className="nav-link logout" onClick={closeMobile}>
+          <NavLink to="/settings" className="nav-item">
+            <span className="icon">⚙️</span>
+            <span className="text">Settings</span>
+          </NavLink>
+
+          <Link to="/" className="nav-item logout">
             <span className="icon">🚪</span>
-            <span className="label">Logout</span>
+            <span className="text">Logout</span>
           </Link>
-        </div>
+        </nav>
       </aside>
 
-      {/* Overlay for mobile */}
-      {isMobileOpen && <div className="overlay" onClick={closeMobile}></div>}
+      {/* MOBILE OVERLAY */}
+      {isMobileOpen && <div className="overlay" onClick={toggleMobile}></div>}
     </>
   );
 };

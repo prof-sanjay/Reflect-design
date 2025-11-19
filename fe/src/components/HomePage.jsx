@@ -6,7 +6,6 @@ import "./HomePage.css";
 function HomePage() {
   const [username, setUsername] = useState("User");
 
-  // 🔹 Fetch profile name from backend
   useEffect(() => {
     const fetchProfileName = async () => {
       try {
@@ -19,12 +18,10 @@ function HomePage() {
 
         if (response.ok) {
           const data = await response.json();
-          if (data?.name) {
-            setUsername(data.name);
-          }
+          if (data?.name) setUsername(data.name);
         }
-      } catch (error) {
-        console.log("Profile fetch error:", error);
+      } catch (err) {
+        console.log("Profile fetch error:", err);
       }
     };
 
@@ -32,59 +29,51 @@ function HomePage() {
   }, []);
 
   return (
-    <div className="home-page">
+    <div className="homepage-wrapper">
       <Navbar />
 
-      {/* ================= HERO =================== */}
-      <header className="home-hero">
-        <h1 className="hero-title">Welcome back, {username} 🌿</h1>
-        <p className="hero-subtitle">
-          Reflect, grow, and rediscover yourself — one entry at a time.
-        </p>
-      </header>
+      {/* ⭐⭐⭐ SCROLL AREA FIX ⭐⭐⭐ */}
+      <div className="main-scroll-area">
 
-      {/* ================= SECTIONS =================== */}
-      <main className="home-sections">
+        {/* HERO */}
+        <header className="hero">
+          <h1 className="hero-title">Welcome back, {username} 🌿</h1>
+          <p className="hero-subtitle">
+            Reflect, grow, and rediscover yourself — one entry at a time.
+          </p>
+        </header>
 
-        {/* New Reflection */}
-        <section className="section-card new-entry">
-          <h2>📝 Start a New Reflection</h2>
-          <p>Capture today’s thoughts and emotions in your journal.</p>
-          <Link to="/new-reflection" className="action-btn">
-            Start Writing
-          </Link>
-        </section>
+        {/* 2x2 GRID */}
+        <main className="card-grid">
 
-        {/* Search Reflections */}
-        <section className="section-card past-entries">
-          <h2>📖 Search Reflections</h2>
-          <p>Look back at your past reflections and see your journey unfold.</p>
-          <Link to="/viewreport" className="action-btn">
-            Search
-          </Link>
-        </section>
+          <div className="glass-card new-card">
+            <h2>📝 Start a New Reflection</h2>
+            <p>Capture today’s thoughts and emotions in your journal.</p>
+            <Link to="/new-reflection" className="card-btn">Start Writing</Link>
+          </div>
 
-        {/* Mental Insights */}
-        <section className="section-card reports">
-          <h2>📊 Mental Health Insights</h2>
-          <p>Understand your emotional patterns and track your mental growth.</p>
+          <div className="glass-card search-card">
+            <h2>📖 Search Reflections</h2>
+            <p>Look back at your past reflections and see your journey unfold.</p>
+            <Link to="/viewreport" className="card-btn">Search</Link>
+          </div>
 
-          {/* ⭐ FIXED: Now it navigates to your Insights Dashboard */}
-          <Link to="/insights" className="action-btn">
-            View Reports
-          </Link>
-        </section>
+          <div className="glass-card insights-card">
+            <h2>📊 Mental Health Insights</h2>
+            <p>Understand your emotional patterns and track your growth.</p>
+            <Link to="/insights" className="card-btn">View Reports</Link>
+          </div>
 
-        {/* Personal Wellness */}
-        <section className="section-card wellness">
-          <h2>🌸 Personal Wellness</h2>
-          <p>Check in with your habits, routines, and overall well-being.</p>
-          <Link to="/personal-wellness" className="action-btn">
-            Open Form
-          </Link>
-        </section>
+          <div className="glass-card wellness-card">
+            <h2>🌸 Personal Wellness</h2>
+            <p>Check in with your habits, routines, and overall well-being.</p>
+            <Link to="/personal-wellness" className="card-btn">Open Form</Link>
+          </div>
 
-      </main>
+        </main>
+
+      </div> {/* END SCROLL AREA */}
+
     </div>
   );
 }
