@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "./ReflectionEditor.css";
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
 const ReflectionEditor = ({ selectedDate, onReflectionSaved }) => {
   const [text, setText] = useState("");
   const [mood, setMood] = useState("Neutral");
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
 
   const moods = [
     { name: "Happy", icon: "😊" },
@@ -16,41 +19,75 @@ const ReflectionEditor = ({ selectedDate, onReflectionSaved }) => {
     { name: "Excited", icon: "🤩" },
   ];
 
-  // ---------------------------------------------------
-  // ⭐ NEW: Fetch reflection for selected date
-  // ---------------------------------------------------
+  // Fetch reflection for selected date
   useEffect(() => {
-    if (!selectedDate) return;
+    if (!selectedDate) {
+      setText("");
+      setMood("Neutral");
+      return;
+    }
 
     const fetchReflection = async () => {
+      setFetching(true);
+      console.log("🔍 Fetching reflection for date:", selectedDate);
+      
       try {
-        const res = await fetch(
-          `http://localhost:5000/api/reflections/${selectedDate}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const token = localStorage.getItem("token");
+        
+        if (!token) {
+          console.error("❌ No token found");
+          return;
+        }
+
+        // Fetch all reflections and filter by date
+        const res = await fetch(`${BASE_URL}/reflections`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        console.log("📡 Response status:", res.status);
 
         if (!res.ok) {
+          console.error("❌ Error response:", res.status);
           setText("");
           setMood("Neutral");
           return;
         }
 
-        const data = await res.json();
+        const allReflections = await res.json();
+        console.log("📦 All reflections received:", allReflections);
 
-        setText(data.content || "");
-        setMood(data.mood || "Neutral");
+        // Find the reflection for the selected date
+        const reflection = allReflections.find((r) => {
+          const reflectionDate = new Date(r.date).toISOString().split('T')[0];
+          console.log("Comparing:", reflectionDate, "with", selectedDate);
+          return reflectionDate === selectedDate;
+        });
+
+        if (reflection) {
+          console.log("✅ Found reflection:", reflection);
+          setText(reflection.content || "");
+          setMood(reflection.mood || "Neutral");
+        } else {
+          console.log("⚠️ No reflection found for this date");
+          setText("");
+          setMood("Neutral");
+        }
+        
       } catch (err) {
-        console.error("Error loading reflection:", err);
+        console.error("❌ Error loading reflection:", err);
+        setText("");
+        setMood("Neutral");
+      } finally {
+        setFetching(false);
       }
     };
 
     fetchReflection();
   }, [selectedDate]);
-  // ---------------------------------------------------
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -68,11 +105,13 @@ const ReflectionEditor = ({ selectedDate, onReflectionSaved }) => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/reflections", {
+      const token = localStorage.getItem("token");
+      
+      const response = await fetch(`${BASE_URL}/reflections`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           date: selectedDate,
@@ -82,14 +121,15 @@ const ReflectionEditor = ({ selectedDate, onReflectionSaved }) => {
       });
 
       const data = await response.json();
+      console.log("💾 Save response:", data);
 
       if (response.ok) {
         alert(`✅ Reflection saved for ${selectedDate} (Mood: ${mood})`);
 
-        // ⭐ NEW: Notify parent to refresh
-        if (onReflectionSaved) onReflectionSaved();
-
-        // ⭐ Do NOT clear text — we want to show saved reflection
+        // Notify parent component to refresh calendar with new mood
+        if (onReflectionSaved) {
+          onReflectionSaved({ date: selectedDate, mood: mood });
+        }
       } else {
         alert("❌ Failed: " + data.message);
       }
@@ -110,40 +150,48 @@ const ReflectionEditor = ({ selectedDate, onReflectionSaved }) => {
       </h2>
 
       {selectedDate && (
-        <form onSubmit={handleSave} className="reflection-form">
-          <textarea
-            className="reflection-textarea"
-            placeholder="How was your day? Write your thoughts here..."
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            maxLength={500}
-            disabled={loading}
-          ></textarea>
-
-          <div className="char-count">{text.length}/500</div>
-
-          <div className="mood-picker">
-            <p className="mood-label">Select your mood:</p>
-            <div className="mood-options">
-              {moods.map((m) => (
-                <button
-                  type="button"
-                  key={m.name}
-                  className={`mood-btn ${mood === m.name ? "selected" : ""}`}
-                  onClick={() => setMood(m.name)}
-                  disabled={loading}
-                >
-                  <span className="mood-icon">{m.icon}</span>
-                  <span>{m.name}</span>
-                </button>
-              ))}
+        <>
+          {fetching ? (
+            <div className="loading-state">
+              <p>Loading reflection...</p>
             </div>
-          </div>
+          ) : (
+            <form onSubmit={handleSave} className="reflection-form">
+              <textarea
+                className="reflection-textarea"
+                placeholder="How was your day? Write your thoughts here..."
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                maxLength={500}
+                disabled={loading}
+              ></textarea>
 
-          <button type="submit" className="save-btn" disabled={loading}>
-            {loading ? "Saving..." : "Save Reflection"}
-          </button>
-        </form>
+              <div className="char-count">{text.length}/500</div>
+
+              <div className="mood-picker">
+                <p className="mood-label">Select your mood:</p>
+                <div className="mood-options">
+                  {moods.map((m) => (
+                    <button
+                      type="button"
+                      key={m.name}
+                      className={`mood-btn ${mood === m.name ? "selected" : ""}`}
+                      onClick={() => setMood(m.name)}
+                      disabled={loading}
+                    >
+                      <span className="mood-icon">{m.icon}</span>
+                      <span>{m.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button type="submit" className="save-btn" disabled={loading}>
+                {loading ? "Saving..." : "Save Reflection"}
+              </button>
+            </form>
+          )}
+        </>
       )}
     </div>
   );
