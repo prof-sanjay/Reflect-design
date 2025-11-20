@@ -1,55 +1,48 @@
 // be/models/Goal.js
 import mongoose from "mongoose";
 
-// ✅ Subgoal Schema
-const subgoalSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: [true, "Subgoal title is required"],
-      trim: true,
-    },
-    completed: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  { _id: false }
-);
-
-// ✅ Main Goal Schema
 const goalSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true, // linked to master table
+      required: true,
     },
+
     title: {
       type: String,
-      required: [true, "Goal title is required"],
+      required: true,
       trim: true,
     },
-    subgoals: {
-      type: [subgoalSchema],
-      default: [],
+
+    description: {
+      type: String,
+      default: "",
     },
-    daysToComplete: {
-      type: Number,
-      required: [true, "Days to complete is required"],
-      min: 1,
+
+    category: {
+      type: String,
+      default: "General",
     },
+
+    priority: {
+      type: String,
+      enum: ["High", "Medium", "Low"],
+      default: "Medium",
+    },
+
     deadline: {
       type: Date,
-      required: [true, "Deadline is required"],
+      required: true,
     },
-    completed: {
-      type: Boolean,
-      default: false,
+
+    status: {
+      type: String,
+      enum: ["Not Started", "InProgress", "Completed"],
+      default: "Not Started",
     },
   },
   { timestamps: true }
 );
 
-const Goal = mongoose.model("Goal", goalSchema);
-export default Goal;
+export default mongoose.model("Goal", goalSchema);

@@ -1,25 +1,27 @@
 import React, { useState } from "react";
-import Navbar from "./Navbar.jsx";
-import "./Goals.css";
+import Navbar from "./Navbar";
+import "./AddGoal.css";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-function AddGoal() {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    category: "",
-    priority: "Medium",
-    deadline: "",
-    status: "Not Started",
-  });
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+export default function AddGoal() {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
+  const [priority, setPriority] = useState("Medium");
+  const [deadline, setDeadline] = useState("");
+  const [status, setStatus] = useState("Not Started");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!title || !description || !category || !deadline) {
+      alert("Please fill all fields.");
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const token = localStorage.getItem("token");
@@ -27,111 +29,111 @@ function AddGoal() {
       const res = await fetch(`${BASE_URL}/goals`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          title,
+          description,
+          category,
+          priority,
+          deadline,
+          status,
+        }),
       });
 
-      if (!res.ok) throw new Error("Failed to add goal");
+      const data = await res.json();
 
-      alert("Goal added successfully!");
+      if (res.ok) {
+        alert("Goal added successfully!");
+        window.location.href = "/goals";
+      } else {
+        alert(data.message || "Failed to add goal");
+      }
 
-      setFormData({
-        title: "",
-        description: "",
-        category: "",
-        priority: "Medium",
-        deadline: "",
-        status: "Not Started",
-      });
-
-      window.location.href = "/goals";
     } catch (err) {
       console.error(err);
-      alert("Error adding goal");
+      alert("Server error");
     }
+
+    setLoading(false);
   };
 
   return (
-    <div className="goals-container">
+    <div className="add-goal-page">
       <Navbar />
-      <h1 className="title">Add New Goal</h1>
 
-      <form className="goal-form" onSubmit={handleSubmit}>
+      <div className="add-goal-container">
+        <h1 className="page-title">Add New Goal</h1>
 
-        {/* Title */}
-        <label className="goal-label">Goal Title</label>
-        <input
-          type="text"
-          name="title"
-          placeholder="Enter your goal title"
-          value={formData.title}
-          onChange={handleChange}
-          required
-        />
+        <form className="goal-form" onSubmit={handleSubmit}>
+          
+          <label>Goal Title</label>
+          <input
+            className="input"
+            placeholder="Enter your goal title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
 
-        {/* Description */}
-        <label className="goal-label">Description</label>
-        <textarea
-          name="description"
-          placeholder="Write a short description"
-          value={formData.description}
-          onChange={handleChange}
-        ></textarea>
+          <label>Description</label>
+          <textarea
+            className="textarea"
+            placeholder="Write a short description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
 
-        {/* Category */}
-        <label className="goal-label">Category</label>
-        <select
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-        >
-          <option value="">Select Category</option>
-          <option>Health</option>
-          <option>Study</option>
-          <option>Career</option>
-          <option>Personal</option>
-          <option>Finance</option>
-        </select>
+          <label>Category</label>
+          <select
+            className="input"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="">Select Category</option>
+            <option value="Personal">Personal</option>
+            <option value="Career">Career</option>
+            <option value="Health">Health</option>
+            <option value="Finance">Finance</option>
+            <option value="Education">Education</option>
+          </select>
 
-        {/* Priority */}
-        <label className="goal-label">Priority</label>
-        <select
-          name="priority"
-          value={formData.priority}
-          onChange={handleChange}
-        >
-          <option>Low</option>
-          <option>Medium</option>
-          <option>High</option>
-        </select>
+          <label>Priority</label>
+          <select
+            className="input"
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+          >
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
 
-        {/* Deadline */}
-        <label className="goal-label">Deadline</label>
-        <input
-          type="date"
-          name="deadline"
-          value={formData.deadline}
-          onChange={handleChange}
-        />
+          <label>Deadline</label>
+          <input
+            type="date"
+            className="input"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+          />
 
-        {/* Status */}
-        <label className="goal-label">Status</label>
-        <select
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-        >
-          <option>Not Started</option>
-          <option>In Progress</option>
-          <option>Completed</option>
-        </select>
+          <label>Status</label>
+          <select
+            className="input"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            <option>Not Started</option>
+            <option>InProgress</option>
+            <option>Completed</option>
+          </select>
 
-        <button type="submit">Add Goal</button>
-      </form>
+          <button className="save-btn" disabled={loading}>
+            {loading ? "Saving..." : "Save Goal"}
+          </button>
+
+        </form>
+      </div>
     </div>
   );
 }
-
-export default AddGoal;

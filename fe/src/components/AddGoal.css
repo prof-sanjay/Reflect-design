@@ -1,0 +1,65 @@
+.add-goal-page {
+  display: flex;
+  min-height: 100vh;
+  background: #faf6ef;
+}
+
+.add-goal-container {
+  flex: 1;
+  margin-left: 80px;
+  margin-top: 70px;
+  padding: 2rem 3rem;
+  background: #ffffff;
+  border-radius: 20px 20px 0 0;
+  min-height: calc(100vh - 70px);
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #4a3503;
+  margin-bottom: 2rem;
+}
+
+.goal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+label {
+  font-weight: 600;
+  color: #4a3503;
+}
+
+.input,
+.textarea {
+  padding: 0.9rem 1rem;
+  border: 1px solid #cfc4ad;
+  border-radius: 10px;
+  font-size: 1rem;
+  width: 100%;
+  background: #faf7f0;
+}
+
+.textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+.save-btn {
+  margin-top: 1.5rem;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  background: #e6d3a2;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.save-btn:hover {
+  background: #d3b56b;
+  transform: translateY(-2px);
+}
