@@ -1,64 +1,62 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Navbar from "./Navbar.jsx";
-import "./Settings.css";
+import React, { useState, useEffect } from 'react';
+import '../styles/Settings.css';
 
-const Settings = () => {
-  const [theme, setTheme] = useState("light");
-  const navigate = useNavigate();
+const Settings = ({ onClose, theme, setTheme }) => {
+  const [localTheme, setLocalTheme] = useState(theme);
 
-  const handleThemeChange = (e) => {
-    setTheme(e.target.value);
-    alert(`Theme changed to ${e.target.value} mode`);
-  };
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', localTheme);
+  }, [localTheme]);
 
-  const handleExport = () => {
-    alert("Your journal data is being exported...");
-    // Later: logic for JSON or CSV export
-  };
-
-  const handleFeedbackRedirect = () => {
-    navigate("/feedback");
+  const handleThemeChange = (selectedTheme) => {
+    setLocalTheme(selectedTheme);
+    setTheme(selectedTheme);
+    localStorage.setItem('theme', selectedTheme);
   };
 
   return (
-    <div className="settings-page">
-      <Navbar />
-
-      <div className="settings-container">
-        <h2 className="settings-title">⚙️ Settings</h2>
-
-        {/* --- Theme Section --- */}
-        <div className="settings-section">
-          <h3>Theme</h3>
-          <p>Choose your preferred theme for the journal.</p>
-          <select
-            value={theme}
-            onChange={handleThemeChange}
-            className="theme-select"
-          >
-            <option value="light">🌞 Light Mode</option>
-            <option value="dark">🌙 Dark Mode</option>
-            <option value="sepia">📜 Sepia Mode</option>
-          </select>
+    <div className="settings-overlay">
+      <div className="settings-modal">
+        <div className="settings-header">
+          <h2>Settings</h2>
+          <button className="close-btn" onClick={onClose}>×</button>
         </div>
-
-        {/* --- Export Data Section --- */}
-        <div className="settings-section">
-          <h3>Export Data</h3>
-          <p>Download all your reflections and notes as a backup.</p>
-          <button className="export-btn" onClick={handleExport}>
-            ⬇️ Export Journal Data
-          </button>
-        </div>
-
-        {/* --- Feedback Section --- */}
-        <div className="settings-section">
-          <h3>Feedback</h3>
-          <p>We’d love to hear your thoughts and suggestions!</p>
-          <button className="feedback-btn" onClick={handleFeedbackRedirect}>
-            💬 Give Feedback
-          </button>
+        
+        <div className="settings-content">
+          <div className="setting-group">
+            <h3>Appearance</h3>
+            <div className="theme-options">
+              <div 
+                className={`theme-option ${localTheme === 'light' ? 'selected' : ''}`}
+                onClick={() => handleThemeChange('light')}
+              >
+                <div className="theme-preview light-preview">
+                  <div className="preview-header"></div>
+                  <div className="preview-content"></div>
+                </div>
+                <span>Light Mode</span>
+              </div>
+              
+              <div 
+                className={`theme-option ${localTheme === 'dark' ? 'selected' : ''}`}
+                onClick={() => handleThemeChange('dark')}
+              >
+                <div className="theme-preview dark-preview">
+                  <div className="preview-header"></div>
+                  <div className="preview-content"></div>
+                </div>
+                <span>Dark Mode</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="setting-group">
+            <h3>About</h3>
+            <div className="about-content">
+              <p>Reflect - Your Personal Wellness Tracker</p>
+              <p>Version 1.0.0</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

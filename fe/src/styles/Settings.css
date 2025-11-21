@@ -1,0 +1,125 @@
+.settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.settings-modal {
+  background: var(--background-color);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.settings-header h2 {
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.settings-content {
+  padding: 20px;
+}
+
+.setting-group {
+  margin-bottom: 30px;
+}
+
+.setting-group h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--text-primary);
+}
+
+.theme-options {
+  display: flex;
+  gap: 20px;
+}
+
+.theme-option {
+  flex: 1;
+  text-align: center;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.theme-option:hover {
+  background-color: var(--hover-background);
+}
+
+.theme-option.selected {
+  background-color: var(--selected-background);
+  border: 2px solid var(--primary-color);
+}
+
+.theme-preview {
+  width: 100%;
+  height: 100px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.light-preview {
+  background: #ffffff;
+}
+
+.dark-preview {
+  background: #1e293b;
+}
+
+.preview-header {
+  height: 30px;
+  background: var(--primary-color);
+}
+
+.preview-content {
+  height: 70px;
+  background: var(--card-background);
+}
+
+.about-content p {
+  margin: 5px 0;
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] {
+  --background-color: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --border-color: #334155;
+  --card-background: #334155;
+  --hover-background: #475569;
+  --selected-background: #475569;
+}
+
+[data-theme="light"] {
+  --background-color: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+  --card-background: #f8fafc;
+  --hover-background: #f1f5f9;
+  --selected-background: #f1f5f9;
+}

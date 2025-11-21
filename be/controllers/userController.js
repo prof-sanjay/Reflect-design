@@ -7,11 +7,15 @@ import jwt from "jsonwebtoken";
  */
 export const registerUser = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, email, role } = req.body;
 
     if (!username || !password) {
       return res.status(400).json({ message: "Username and password are required." });
     }
+
+    // Validate role - only allow user or therapist signup
+    const allowedRoles = ["user", "therapist"];
+    const userRole = allowedRoles.includes(role) ? role : "user";
 
     const existingUser = await User.findOne({ username });
     if (existingUser) {
@@ -19,14 +23,25 @@ export const registerUser = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, password: hashedPassword });
+    const newUser = new User({ username, password: hashedPassword, email, role: userRole });
     await newUser.save();
+
+    // If user is signing up as a therapist, create a therapist profile
+    if (userRole === "therapist") {
+      // Create a basic therapist profile
+      const Therapist = (await import("../models/Therapist.js")).default;
+      await Therapist.create({
+        user: newUser._id,
+        isApproved: false
+      });
+    }
 
     res.status(201).json({
       message: "User registered successfully!",
       user: {
         id: newUser._id,
         username: newUser.username,
+        role: newUser.role,
       },
     });
   } catch (error) {
@@ -59,6 +74,7 @@ export const loginUser = async (req, res) => {
       user: {
         id: user._id,
         username: user.username,
+        role: user.role,
       },
       token,
     });
@@ -78,7 +94,15 @@ export const getProfile = async (req, res) => {
     }
 
     const user = await User.findById(req.user.id).select("-password");
-    res.status(200).json({ user });
+    
+    // If user is a therapist, also get their therapist profile
+    let therapistProfile = null;
+    if (user.role === "therapist") {
+      const Therapist = (await import("../models/Therapist.js")).default;
+      therapistProfile = await Therapist.findOne({ user: user._id });
+    }
+
+    res.status(200).json({ user, therapistProfile });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch profile.", error: error.message });
   }

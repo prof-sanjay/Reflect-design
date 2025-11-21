@@ -1,30 +1,22 @@
-// routes/reflectionRoutes.js
+// be/routes/reflectionRoutes.js
 import express from "express";
-import { protect } from "../middleware/authMiddleware.js";
-
 import {
-  saveReflection,
+  getReflections,
   getReflectionByDate,
-  getAllReflections,
-  fetchMoods
+  createReflection,
+  updateReflection,
+  deleteReflection,
 } from "../controllers/reflectionController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-/* -----------------------------------------------------
-   ORDER IS IMPORTANT
-------------------------------------------------------*/
+router.use(protect); // All routes require authentication
 
-// ⭐ 1. STATIC ROUTES FIRST
-router.get("/moods/all", protect, fetchMoods);
-
-// ⭐ 2. FILTERED LIST OF ALL REFLECTIONS
-router.get("/", protect, getAllReflections);
-
-// ⭐ 3. GET SPECIFIC REFLECTION BY DATE
-router.get("/date/:date", protect, getReflectionByDate);
-
-// ⭐ 4. CREATE or UPDATE REFLECTION
-router.post("/", protect, saveReflection);
+router.get("/", getReflections);
+router.get("/date/:date", getReflectionByDate);
+router.post("/", createReflection);
+router.put("/:id", updateReflection);
+router.delete("/:id", deleteReflection);
 
 export default router;

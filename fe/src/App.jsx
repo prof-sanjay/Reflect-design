@@ -1,166 +1,86 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+// fe/src/App.jsx
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 
-// 🔓 Public Page
-import LoginPage from "./components/LoginPage.jsx";
+import Navbar from './components/Navbar';
+import Login from './pages/Login';
+import Register from './pages/Signup';
+import Dashboard from './pages/HabitTracker';
+import Analytics from './pages/Analytics';
+import WellnessForm from './pages/WellnessForm';
+import Reflection from './pages/ReflectionPage';
 
-// 🔐 Protected Pages
-import HomePage from "./components/HomePage.jsx";
-import MyReflections from "./components/MyReflections.jsx";
-import NewReflection from "./components/NewReflection.jsx";
-import ReportFilter from "./components/ReportFilter.jsx";
-import PersonalWellnessForm from "./components/PersonalWellnessForm.jsx";
-import MentalInsights from "./components/MentalInsights.jsx";
-import AddGoal from "./components/Addgoal.jsx";
+import UserProfile from './pages/UserProfile';
+import TherapistProfile from './pages/TherapistProfile';
+import AdminDashboard from './pages/AdminDashboard';
+import TherapistBooking from './pages/TherapistBooking';
 
-import TodoList from "./components/TodoList.jsx";
-import Goals from "./components/Goals.jsx";
-import Feedback from "./components/Feedback.jsx";
-import Profile from "./components/Profile.jsx";
-import Settings from "./components/Settings.jsx";
+import ImprovedGoals from './components/ImprovedGoals';
+import Feedback from './components/Feedback';
+import Settings from './components/Settings';
 
-// 🔒 Route Protection Wrapper
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import './styles/App.css';
 
 function App() {
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [theme, setTheme] = useState('light');
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
   return (
-    <Routes>
-      {/* ================================
-          PUBLIC ROUTES 
-      ================================= */}
-      <Route path="/" element={<LoginPage />} />
+    <Router>
+      <AuthProvider>
+        <div className="App" data-theme={theme}>
+          
+          {/* Navbar */}
+          <Navbar 
+            onFeedbackClick={() => setShowFeedback(true)} 
+            onSettingsClick={() => setShowSettings(true)}
+          />
 
-      {/* ================================
-          PROTECTED ROUTES 
-      ================================= */}
+          {/* Feedback Modal */}
+          {showFeedback && <Feedback onClose={() => setShowFeedback(false)} />}
 
-      <Route
-        path="/home"
-        element={
-          <ProtectedRoute>
-            <HomePage />
-          </ProtectedRoute>
-        }
-      />
+          {/* Settings Modal */}
+          {showSettings && (
+            <Settings 
+              onClose={() => setShowSettings(false)} 
+              theme={theme} 
+              setTheme={setTheme} 
+            />
+          )}
 
-      <Route
-        path="/my-reflections"
-        element={
-          <ProtectedRoute>
-            <MyReflections />
-          </ProtectedRoute>
-        }
-      />
+          {/* Routes */}
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/signup" element={<Register />} />
+            <Route path="/register" element={<Register />} />
 
-      <Route
-        path="/new-reflection"
-        element={
-          <ProtectedRoute>
-            <NewReflection />
-          </ProtectedRoute>
-        }
-      />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/habits" element={<Dashboard />} />
 
+            <Route path="/goals" element={<ImprovedGoals />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/wellness" element={<WellnessForm />} />
+            <Route path="/reflection" element={<Reflection />} />
+            <Route path="/therapist-booking" element={<TherapistBooking />} />
 
-      <Route
-        path="/viewreport"
-        element={
-          <ProtectedRoute>
-            <ReportFilter />
-          </ProtectedRoute>
-        }
-      />
+            {/* USER & THERAPIST PROFILES */}
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/therapist/profile" element={<TherapistProfile />} />
 
-      {/* ⭐ Mental Health Visualization Dashboard */}
-      <Route
-        path="/insights"
-        element={
-          <ProtectedRoute>
-            <MentalInsights />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* Productivity */}
-      <Route
-        path="/to-do-list"
-        element={
-          <ProtectedRoute>
-            <TodoList />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/goals"
-        element={
-          <ProtectedRoute>
-            <Goals />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route path="/add-goal" element={<AddGoal/>} />
-
-
-      {/* User Settings */}
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/settings"
-        element={
-          <ProtectedRoute>
-            <Settings />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* Wellness */}
-      <Route
-        path="/personal-wellness"
-        element={
-          <ProtectedRoute>
-            <PersonalWellnessForm />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* Feedback */}
-      <Route
-        path="/feedback"
-        element={
-          <ProtectedRoute>
-            <Feedback />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* ================================
-          404 NOT FOUND PAGE
-      ================================= */}
-      <Route
-        path="*"
-        element={
-          <h2
-            style={{
-              textAlign: "center",
-              marginTop: "2rem",
-              color: "red",
-              fontWeight: "bold",
-            }}
-          >
-            404 - Page Not Found
-          </h2>
-        }
-      />
-    </Routes>
+            {/* ADMIN */}
+            <Route path="/admin" element={<AdminDashboard />} />
+          </Routes>
+        </div>
+      </AuthProvider>
+    </Router>
   );
 }
 

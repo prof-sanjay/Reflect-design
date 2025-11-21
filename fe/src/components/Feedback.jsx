@@ -1,83 +1,59 @@
-import React, { useState } from "react";
-import Navbar from "./Navbar.jsx";
-import "./Feedback.css";
+import React, { useState } from 'react';
+import '../styles/Feedback.css';
 
-const Feedback = () => {
-  const [rating, setRating] = useState("");
-  const [comments, setComments] = useState("");
-  const [wordCount, setWordCount] = useState(0);
-
-  const handleCommentsChange = (e) => {
-    const text = e.target.value;
-    const words = text.trim().split(/\s+/).filter((word) => word.length > 0);
-    setComments(text);
-    setWordCount(words.length);
-  };
+const Feedback = ({ onClose }) => {
+  const [feedback, setFeedback] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!rating || !comments) {
-      alert("Please select a rating and write your comments!");
-      return;
-    }
-
-    const words = comments.trim().split(/\s+/);
-    if (words.length > 100) {
-      alert("Your feedback exceeds 100 words. Please shorten it.");
-      return;
-    }
-
-    console.log("Feedback submitted:", { rating, comments });
-    alert("Thank you for your valuable feedback!");
-    setRating("");
-    setComments("");
-    setWordCount(0);
+    // In a real app, you would send this to your backend
+    console.log('Feedback submitted:', feedback);
+    setSubmitted(true);
+    
+    // Reset after 2 seconds
+    setTimeout(() => {
+      setFeedback('');
+      setSubmitted(false);
+      onClose();
+    }, 2000);
   };
 
   return (
-    <div className="feedback-page">
-      <Navbar />
-
-      <div className="feedback-container">
-        <h2 className="feedback-title">💬 Share Your Feedback</h2>
-        <p className="feedback-subtitle">
-          Tell us how your journaling experience has been.
-        </p>
-
-        <form className="feedback-form" onSubmit={handleSubmit}>
-          <label>Rate your experience</label>
-          <select value={rating} onChange={(e) => setRating(e.target.value)}>
-            <option value="">Select rating</option>
-            <option value="5">🌟🌟🌟🌟🌟 Excellent</option>
-            <option value="4">🌟🌟🌟🌟 Good</option>
-            <option value="3">🌟🌟🌟 Average</option>
-            <option value="2">🌟🌟 Poor</option>
-            <option value="1">🌟 Very Poor</option>
-          </select>
-
-          <label>Your Comments</label>
-          <textarea
-            value={comments}
-            onChange={handleCommentsChange}
-            placeholder="Write your feedback here (max 50 words)..."
-          />
-
-          <p
-            className={`word-count ${
-              wordCount > 100 ? "limit-exceeded" : ""
-            }`}
-          >
-            {wordCount}/50 words
-          </p>
-
-          <button
-            type="submit"
-            className="submit-btn"
-            disabled={wordCount > 50}
-          >
-            🚀 Submit Feedback
-          </button>
-        </form>
+    <div className="feedback-overlay">
+      <div className="feedback-modal">
+        <div className="feedback-header">
+          <h2>Send Feedback</h2>
+          <button className="close-btn" onClick={onClose}>×</button>
+        </div>
+        
+        {submitted ? (
+          <div className="success-message">
+            Thank you for your feedback! We'll review it shortly.
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="feedback-form">
+            <div className="form-group">
+              <label htmlFor="feedback">Your Feedback:</label>
+              <textarea
+                id="feedback"
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+                placeholder="Tell us what you think, report issues, or suggest improvements..."
+                required
+              />
+            </div>
+            
+            <div className="form-actions">
+              <button type="button" className="cancel-btn" onClick={onClose}>
+                Cancel
+              </button>
+              <button type="submit" className="submit-btn">
+                Send Feedback
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

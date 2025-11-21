@@ -1,32 +1,39 @@
+// be/models/Reflection.js
 import mongoose from "mongoose";
-import express from "express";
-import { getAllReflections } from "../controllers/reflectionController.js";
 
-
-const ReflectionSchema = new mongoose.Schema(
+const reflectionSchema = new mongoose.Schema(
   {
-    user: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: "User", 
-      required: true 
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-
-    date: { 
-      type: String, 
-      required: true 
+    date: {
+      type: Date,
+      required: true,
     },
-
-    content: {           // <-- THIS MUST EXIST (not text)
+    mood: {
+      type: String,
+      enum: ["happy", "sad", "anxious", "angry", "calm", "excited", "neutral"],
+      required: true,
+    },
+    entry: {
       type: String,
       required: true,
     },
-
-    mood: {
+    gratitude: {
       type: String,
-      default: "Neutral",
-    }
+    },
+    goals: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Reflection", ReflectionSchema);
+// Index for faster queries
+reflectionSchema.index({ user: 1, date: 1 });
+
+const Reflection = mongoose.model("Reflection", reflectionSchema);
+
+export default Reflection;

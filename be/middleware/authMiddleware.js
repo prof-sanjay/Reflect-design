@@ -44,6 +44,7 @@ export const protect = async (req, res, next) => {
 
     // ✅ 5. Attach user to request and continue
     req.user = user;
+    req.user._id = user._id; // Ensure _id is accessible
     next();
   } catch (error) {
     console.error("❌ Auth Middleware Error:", error.message);
@@ -67,3 +68,24 @@ export const protect = async (req, res, next) => {
     });
   }
 };
+
+/**
+ * 🔒 Role-based Authorization Middleware
+ * Restricts access to routes based on user role
+ */
+export const authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        message: `Access denied. Required role: ${roles.join(' or')}`,
+      });
+    }
+
+    next();
+  };
+};
+
