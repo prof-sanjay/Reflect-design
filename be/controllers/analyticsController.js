@@ -10,19 +10,16 @@ export const getWeeklyAnalytics = async (req, res) => {
     const today = new Date();
     const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
     
-    const weekAgoStr = weekAgo.toISOString().split('T')[0];
-    const todayStr = today.toISOString().split('T')[0];
-
     // Get reflections for the week
     const reflections = await Reflection.find({
       user: userId,
-      date: { $gte: weekAgoStr, $lte: todayStr }
+      date: { $gte: weekAgo, $lte: today }
     });
 
     // Get wellness data
     const wellnessData = await Wellness.find({
       user: userId,
-      date: { $gte: weekAgoStr, $lte: todayStr }
+      date: { $gte: weekAgo, $lte: today }
     });
 
     // Mood distribution
@@ -61,17 +58,14 @@ export const getMonthlyAnalytics = async (req, res) => {
     const today = new Date();
     const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
     
-    const monthAgoStr = monthAgo.toISOString().split('T')[0];
-    const todayStr = today.toISOString().split('T')[0];
-
     const reflections = await Reflection.find({
       user: userId,
-      date: { $gte: monthAgoStr, $lte: todayStr }
+      date: { $gte: monthAgo, $lte: today }
     });
 
     const wellnessData = await Wellness.find({
       user: userId,
-      date: { $gte: monthAgoStr, $lte: todayStr }
+      date: { $gte: monthAgo, $lte: today }
     });
 
     // Mood trends over time
@@ -108,26 +102,37 @@ export const getAdminAnalytics = async (req, res) => {
 
     // Daily active users (users with lastActive today)
     const dau = await User.countDocuments({
-      lastActive: { $gte: new Date(today) }
+      lastActive: { 
+        $gte: new Date(today),
+        $lt: new Date(new Date(today).getTime() + 24 * 60 * 60 * 1000)
+      }
     });
 
     // Total users
     const totalUsers = await User.countDocuments({ isActive: true });
 
     // Reflections today
+    const startOfDay = new Date(today);
+    const endOfDay = new Date(new Date(today).getTime() + 24 * 60 * 60 * 1000);
+    
     const reflectionsToday = await Reflection.countDocuments({
-      date: today
+      date: { 
+        $gte: startOfDay,
+        $lt: endOfDay
+      }
     });
 
     // Mood distribution (last 7 days)
-    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const recentReflections = await Reflection.find({
       date: { $gte: weekAgo }
     });
 
     const moodDist = {};
     recentReflections.forEach(r => {
-      moodDist[r.mood] = (moodDist[r.mood] || 0) + 1;
+      if (r.mood) {  // Only count reflections that have a mood
+        moodDist[r.mood] = (moodDist[r.mood] || 0) + 1;
+      }
     });
 
     res.status(200).json({
@@ -135,7 +140,7 @@ export const getAdminAnalytics = async (req, res) => {
       totalUsers,
       reflectionsToday,
       moodDistribution: moodDist,
-      avgReflectionsPerUser: totalUsers > 0 ? (reflectionsToday / totalUsers).toFixed(2) : 0,
+      avgReflectionsPerUser: totalUsers > 0 ? (reflectionsToday / totalUsers).toFixed(2) : "0.00",
     });
   } catch (error) {
     console.error("Admin analytics error:", error);

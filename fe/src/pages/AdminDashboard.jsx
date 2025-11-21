@@ -41,11 +41,21 @@ const AdminDashboard = () => {
       } else if (activeTab === "analytics") {
         const data = await getAdminAnalytics();
         setAnalytics(data);
+      } else if (activeTab === "broadcast") {
+        // No data loading needed for broadcast form
+      } else if (activeTab === "therapists") {
+        // No data loading needed for therapists section
       }
     } catch (error) {
       console.error("Failed to load data:", error);
+      alert("Failed to load data. Please try again.");
     }
   };
+
+  // Load initial data
+  useEffect(() => {
+    loadData();
+  }, [activeTab]);
 
   const handleUpdateUserRole = async (userId, role) => {
     try {
@@ -53,6 +63,7 @@ const AdminDashboard = () => {
       loadData();
     } catch (error) {
       console.error("Failed to update user:", error);
+      alert("Failed to update user. Please try again.");
     }
   };
 
@@ -64,6 +75,7 @@ const AdminDashboard = () => {
       loadData();
     } catch (error) {
       console.error("Failed to create prompt:", error);
+      alert("Failed to create prompt. Please try again.");
     }
   };
 
@@ -75,6 +87,7 @@ const AdminDashboard = () => {
       alert("Broadcast sent successfully!");
     } catch (error) {
       console.error("Failed to send broadcast:", error);
+      alert("Failed to send broadcast. Please try again.");
     }
   };
 
@@ -84,6 +97,15 @@ const AdminDashboard = () => {
       loadData();
     } catch (error) {
       console.error("Failed to resolve alert:", error);
+    }
+  };
+
+  const handleDeletePrompt = async (promptId) => {
+    try {
+      await deletePrompt(promptId);
+      loadData();
+    } catch (error) {
+      console.error("Failed to delete prompt:", error);
     }
   };
 
@@ -117,6 +139,12 @@ const AdminDashboard = () => {
           Alerts
         </button>
         <button
+          className={activeTab === "broadcast" ? "active" : ""}
+          onClick={() => setActiveTab("broadcast")}
+        >
+          Broadcast
+        </button>
+        <button
           className={activeTab === "therapists" ? "active" : ""}
           onClick={() => setActiveTab("therapists")}
         >
@@ -125,35 +153,45 @@ const AdminDashboard = () => {
       </div>
 
       <div className="tab-content">
-        {activeTab === "analytics" && analytics && (
+        {activeTab === "analytics" && (
           <div className="analytics-section">
-            <div className="stats-row">
-              <div className="stat-box">
-                <h3>Daily Active Users</h3>
-                <p className="big-number">{analytics.dailyActiveUsers}</p>
-              </div>
-              <div className="stat-box">
-                <h3>Total Users</h3>
-                <p className="big-number">{analytics.totalUsers}</p>
-              </div>
-              <div className="stat-box">
-                <h3>Reflections Today</h3>
-                <p className="big-number">{analytics.reflectionsToday}</p>
-              </div>
-              <div className="stat-box">
-                <h3>Avg Reflections/User</h3>
-                <p className="big-number">{analytics.avgReflectionsPerUser}</p>
-              </div>
-            </div>
-            <div className="mood-dist">
-              <h3>Mood Distribution (Last 7 Days)</h3>
-              {Object.entries(analytics.moodDistribution).map(([mood, count]) => (
-                <div key={mood} className="mood-row">
-                  <span>{mood}</span>
-                  <span>{count}</span>
+            {analytics ? (
+              <>
+                <div className="stats-row">
+                  <div className="stat-box">
+                    <h3>Daily Active Users</h3>
+                    <p className="big-number">{analytics.dailyActiveUsers}</p>
+                  </div>
+                  <div className="stat-box">
+                    <h3>Total Users</h3>
+                    <p className="big-number">{analytics.totalUsers}</p>
+                  </div>
+                  <div className="stat-box">
+                    <h3>Reflections Today</h3>
+                    <p className="big-number">{analytics.reflectionsToday}</p>
+                  </div>
+                  <div className="stat-box">
+                    <h3>Avg Reflections/User</h3>
+                    <p className="big-number">{analytics.avgReflectionsPerUser}</p>
+                  </div>
                 </div>
-              ))}
-            </div>
+                <div className="mood-dist">
+                  <h3>Mood Distribution (Last 7 Days)</h3>
+                  {Object.keys(analytics.moodDistribution).length > 0 ? (
+                    Object.entries(analytics.moodDistribution).map(([mood, count]) => (
+                      <div key={mood} className="mood-row">
+                        <span>{mood}</span>
+                        <span>{count}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No mood data available</p>
+                  )}
+                </div>
+              </>
+            ) : (
+              <p>Loading analytics data...</p>
+            )}
           </div>
         )}
 
@@ -228,7 +266,7 @@ const AdminDashboard = () => {
                     <p>{prompt.text}</p>
                     <span className="category-badge">{prompt.category}</span>
                   </div>
-                  <button onClick={() => deletePrompt(prompt._id).then(loadData)} className="btn-delete-sm">
+                  <button onClick={() => handleDeletePrompt(prompt._id)} className="btn-delete-sm">
                     Delete
                   </button>
                 </div>
