@@ -4,10 +4,10 @@ import { saveProfile, getProfile } from "../controllers/profileController.js";
 
 const router = express.Router();
 
-// Save or Update Profile
+// Save or update profile
 router.post("/", protect, saveProfile);
 
-// Get Profile
-router.get("/", protect, getProfile);
+// MUST MATCH FRONTEND REQUEST
+router.get("/me", protect, getProfile);
 
 export default router;

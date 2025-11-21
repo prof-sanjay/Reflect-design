@@ -1,24 +1,22 @@
 // fe/src/utils/api.js
 import axios from "axios";
 
-// =============================
-// ✅ FIXED BASE URL
-// No more double `/api/api/...`
-// =============================
-const API_BASE_URL = "http://localhost:5003"; 
+// ========================================
+// ✅ BASE URL – Reads from .env
+// ========================================
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5003";
 
-// Axios instance WITHOUT /api in baseURL
+
+// Create Axios instance
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  headers: { "Content-Type": "application/json" },
 });
 
-// Get token
+// Get JWT token
 const getToken = () => localStorage.getItem("token");
 
-// Inject Token Automatically
+// Auto-inject token
 apiClient.interceptors.request.use((config) => {
   const token = getToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -26,9 +24,9 @@ apiClient.interceptors.request.use((config) => {
 });
 
 
-// =============================
+// ============================================================================
 // ⭐ REFLECTIONS
-// =============================
+// ============================================================================
 export const fetchReflections = async () => {
   const res = await apiClient.get("/api/reflections");
   return res.data;
@@ -47,9 +45,9 @@ export const uploadMedia = async (formData) => {
 };
 
 
-// =============================
-// ⭐ HABIT TRACKER
-// =============================
+// ============================================================================
+// ⭐ HABITS
+// ============================================================================
 export const createHabit = async (data) => {
   const res = await apiClient.post("/api/habits", data);
   return res.data;
@@ -81,9 +79,9 @@ export const getHabitStats = async () => {
 };
 
 
-// =============================
+// ============================================================================
 // ⭐ WELLNESS
-// =============================
+// ============================================================================
 export const getWellnessHistory = async (limit = 30) => {
   const res = await apiClient.get(`/api/wellness?limit=${limit}`);
   return res.data;
@@ -95,9 +93,9 @@ export const saveWellnessData = async (data) => {
 };
 
 
-// =============================
+// ============================================================================
 // ⭐ ANALYTICS
-// =============================
+// ============================================================================
 export const getWeeklyAnalytics = async () => {
   const res = await apiClient.get("/api/analytics/weekly");
   return res.data;
@@ -114,9 +112,9 @@ export const getAdminAnalytics = async () => {
 };
 
 
-// =============================
+// ============================================================================
 // ⭐ AI
-// =============================
+// ============================================================================
 export const predictMood = async (text) => {
   const res = await apiClient.post("/api/ai/predict-mood", { text });
   return res.data;
@@ -133,9 +131,9 @@ export const getUserInsights = async (userId) => {
 };
 
 
-// =============================
+// ============================================================================
 // ⭐ ADMIN
-// =============================
+// ============================================================================
 export const getAllUsers = async (filters = {}) => {
   const res = await apiClient.get("/api/admin/users", { params: filters });
   return res.data;
@@ -147,7 +145,10 @@ export const updateUser = async (userId, updates) => {
 };
 
 export const assignTherapist = async (userId, therapistId) => {
-  const res = await apiClient.post("/api/admin/assign-therapist", { userId, therapistId });
+  const res = await apiClient.post("/api/admin/assign-therapist", {
+    userId,
+    therapistId,
+  });
   return res.data;
 };
 
@@ -156,8 +157,8 @@ export const createPrompt = async (data) => {
   return res.data;
 };
 
-export const getAllPrompts = async (filters = {}) => {
-  const res = await apiClient.get("/api/admin/prompts", { params: filters });
+export const getAllPrompts = async () => {
+  const res = await apiClient.get("/api/admin/prompts");
   return res.data;
 };
 
@@ -176,8 +177,8 @@ export const sendBroadcast = async (data) => {
   return res.data;
 };
 
-export const getAlerts = async (filters = {}) => {
-  const res = await apiClient.get("/api/admin/alerts", { params: filters });
+export const getAlerts = async () => {
+  const res = await apiClient.get("/api/admin/alerts");
   return res.data;
 };
 
@@ -186,15 +187,10 @@ export const resolveAlert = async (id) => {
   return res.data;
 };
 
-export const monitorRiskLevels = async () => {
-  const res = await apiClient.post("/api/admin/monitor-risk");
-  return res.data;
-};
 
-
-// =============================
+// ============================================================================
 // ⭐ THERAPIST
-// =============================
+// ============================================================================
 export const getAssignedPatients = async () => {
   const res = await apiClient.get("/api/therapist/patients");
   return res.data;
@@ -210,23 +206,13 @@ export const getPatientInsights = async (id) => {
   return res.data;
 };
 
-export const getChatWithPatient = async (id) => {
-  const res = await apiClient.get(`/api/therapist/chat/${id}`);
-  return res.data;
-};
-
-export const sendMessageToPatient = async (id, content) => {
-  const res = await apiClient.post(`/api/therapist/chat/${id}/message`, { content });
+export const getAppointments = async () => {
+  const res = await apiClient.get("/api/therapist/appointments");
   return res.data;
 };
 
 export const createAppointment = async (data) => {
   const res = await apiClient.post("/api/therapist/appointments", data);
-  return res.data;
-};
-
-export const getAppointments = async (filters = {}) => {
-  const res = await apiClient.get("/api/therapist/appointments", { params: filters });
   return res.data;
 };
 
@@ -241,9 +227,9 @@ export const getRedAlerts = async () => {
 };
 
 
-// =============================
+// ============================================================================
 // ⭐ NOTIFICATIONS
-// =============================
+// ============================================================================
 export const getNotifications = async () => {
   const res = await apiClient.get("/api/notifications");
   return res.data;
@@ -264,4 +250,6 @@ export const deleteNotification = async (id) => {
   return res.data;
 };
 
+
+// Export axios instance
 export default apiClient;

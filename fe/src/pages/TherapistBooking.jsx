@@ -33,10 +33,7 @@ const TherapistBooking = () => {
 
   const loadTherapists = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await apiClient.get("/api/therapist/list", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await apiClient.get("/api/therapist/list");
       setTherapists(response.data);
     } catch (error) {
       console.error("Failed to load therapists:", error);
@@ -45,10 +42,7 @@ const TherapistBooking = () => {
 
   const loadMyBookings = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await apiClient.get("/api/bookings/my-bookings", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await apiClient.get("/api/bookings/my-bookings");
       setMyBookings(response.data);
     } catch (error) {
       console.error("Failed to load bookings:", error);
@@ -60,7 +54,6 @@ const TherapistBooking = () => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
       await apiClient.post(
         "/api/bookings",
         {
@@ -68,8 +61,7 @@ const TherapistBooking = () => {
           date: bookingData.date,
           time: bookingData.time,
           notes: bookingData.notes,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
+        }
       );
 
       alert("Appointment booked successfully!");
@@ -89,11 +81,9 @@ const TherapistBooking = () => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
       await apiClient.post(
         `/api/therapist/${selectedTherapist._id}/review`,
-        reviewData,
-        { headers: { Authorization: `Bearer ${token}` } }
+        reviewData
       );
 
       alert("Review submitted successfully!");
