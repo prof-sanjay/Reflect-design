@@ -26,7 +26,7 @@ import {
 
 import "../styles/Analytics.css";
 
-const Analytics = () => {
+const Dashboard = () => {
   const [period, setPeriod] = useState("week");
   const [analytics, setAnalytics] = useState(null);
   const [wellnessData, setWellnessData] = useState([]);
@@ -191,7 +191,7 @@ const Analytics = () => {
   return (
     <div className="analytics-page">
       <div className="analytics-header">
-        <h1>📊 Analytics Dashboard</h1>
+        <h1>📊 Dashboard</h1>
 
         <div className="period-selector">
           <button
@@ -349,4 +349,4 @@ const Analytics = () => {
   );
 };
 
-export default Analytics;
+export default Dashboard;

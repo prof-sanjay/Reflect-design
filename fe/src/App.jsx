@@ -6,8 +6,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Signup';
-import Dashboard from './pages/HabitTracker';
-import Analytics from './pages/Analytics';
+import Dashboard from './pages/Dashboard';
 import WellnessForm from './pages/WellnessForm';
 import Reflection from './pages/ReflectionPage';
 
@@ -66,7 +65,6 @@ function App() {
             <Route path="/habits" element={<Dashboard />} />
 
             <Route path="/goals" element={<ImprovedGoals />} />
-            <Route path="/analytics" element={<Analytics />} />
             <Route path="/wellness" element={<WellnessForm />} />
             <Route path="/reflection" element={<Reflection />} />
             <Route path="/therapist-booking" element={<TherapistBooking />} />

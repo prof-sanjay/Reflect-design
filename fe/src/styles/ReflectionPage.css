@@ -20,7 +20,6 @@
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   height: fit-content;
-  sticky: top;
   position: sticky;
   top: 90px;
 }
@@ -80,6 +79,7 @@
   font-weight: 500;
   transition: all 0.3s;
   border: 2px solid transparent;
+  background-color: #c9e0ff;
 }
 
 .calendar-day:not(.empty):hover {

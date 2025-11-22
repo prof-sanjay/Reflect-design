@@ -41,7 +41,6 @@ const Navbar = ({ onFeedbackClick, onSettingsClick }) => {
                 <li className="nav-item"><Link to="/reflection" className="nav-link">Reflection</Link></li>
                 <li className="nav-item"><Link to="/goals" className="nav-link">Goals</Link></li>
                 <li className="nav-item"><Link to="/therapist-booking" className="nav-link">Book Therapist</Link></li>
-                <li className="nav-item"><Link to="/analytics" className="nav-link">Analytics</Link></li>
                 <li className="nav-item"><Link to="/profile" className="nav-link">Profile</Link></li>
               </>
             )}
