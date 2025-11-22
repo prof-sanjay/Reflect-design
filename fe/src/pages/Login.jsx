@@ -4,6 +4,9 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "../styles/Login.css";
 
+// 🔥 Added import
+import { useAuth } from "../contexts/AuthContext";
+
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -11,13 +14,16 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // 🔥 Added context login function
+  const { login } = useAuth();
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      // ✅ Always use backend URL from env
+      // Backend URL
       const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:5003";
 
       const response = await axios.post(
@@ -27,11 +33,11 @@ const Login = () => {
 
       const { token, user } = response.data;
 
-      // Save login data
-      localStorage.setItem("token", token);
-      localStorage.setItem("userId", user.id);
-      localStorage.setItem("username", user.username);
-      localStorage.setItem("userRole", user.role);
+      // 🔥 Use AuthContext to update user instantly
+      await login({
+        token,
+        user,
+      });
 
       // ROLE-BASED REDIRECTION
       if (user.role === "admin") {
@@ -39,7 +45,7 @@ const Login = () => {
       } else if (user.role === "therapist") {
         navigate("/therapist/profile");
       } else {
-        navigate("/dashboard");  // normal user
+        navigate("/dashboard");  
       }
 
     } catch (err) {

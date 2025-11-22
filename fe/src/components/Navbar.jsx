@@ -8,7 +8,12 @@ const Navbar = ({ onFeedbackClick, onSettingsClick }) => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
 
-  const userRole = localStorage.getItem("userRole"); // 🔥 Detect user role
+const [userRole, setUserRole] = React.useState(localStorage.getItem("userRole"));
+
+React.useEffect(() => {
+  setUserRole(localStorage.getItem("userRole"));
+}, [currentUser]);
+
 
   const handleLogout = async () => {
     try {
