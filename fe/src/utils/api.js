@@ -250,6 +250,21 @@ export const deleteNotification = async (id) => {
   return res.data;
 };
 
+export const deleteUser1 = async (userId) => {
+  const token = localStorage.getItem("token");
+
+  await axios.delete(`http://localhost:5003/api/admin/users/${userId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const deleteUser = async (id) => {
+  const res = await fetch(`${"http://localhost:5003"}/users/${id}`, {
+    method: "DELETE",
+  });
+  return res.json();
+};
+
 
 // Export axios instance
 export default apiClient;

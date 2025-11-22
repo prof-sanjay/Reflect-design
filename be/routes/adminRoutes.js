@@ -14,6 +14,7 @@ import {
   monitorRiskLevels,
 } from "../controllers/adminController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
+import { deleteUserById } from "../controllers/userController.js";
 
 const router = express.Router();
 
@@ -35,5 +36,8 @@ router.post("/broadcast", protect, authorize("admin"), sendBroadcastNotification
 router.get("/alerts", protect, authorize("admin"), getAlerts);
 router.put("/alerts/:alertId/resolve", protect, authorize("admin"), resolveAlert);
 router.post("/monitor-risk", protect, authorize("admin"), monitorRiskLevels);
+
+router.delete("/admin/users/:id", authMiddleware, adminOnly, deleteUserController);
+router.delete("/users/:id", deleteUserById);
 
 export default router;

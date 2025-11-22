@@ -1,0 +1,128 @@
+.admin-therapist-management {
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.management-container {
+  width: 95%;
+  max-width: 1100px;
+  background: #ffffff;
+  padding: 25px 35px;
+  border-radius: 14px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+}
+
+h1 {
+  margin-bottom: 25px;
+}
+
+.therapists-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.refresh-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #4c7bfe;
+  color: white;
+  cursor: pointer;
+}
+
+.therapists-table {
+  width: 100%;
+}
+
+.table-header, .table-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1.2fr 1fr 1fr 1fr 0.7fr 0.7fr;
+  padding: 14px 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.table-header {
+  background: #f1f4ff;
+  font-weight: bold;
+}
+
+.table-row {
+  background: #fafafa;
+}
+
+.table-row:hover {
+  background: #f5f7ff;
+  transition: 0.2s ease-in-out;
+}
+
+.table-cell {
+  padding: 8px 5px;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.status-approved {
+  background: #d4ffd8;
+  color: #0a7a1c;
+}
+
+.status-pending {
+  background: #ffe0df;
+  color: #b32c2c;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: #ccc;
+  border-radius: 34px;
+  top: 0; left: 0; right: 0; bottom: 0;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #4c7bfe;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
