@@ -77,12 +77,17 @@ React.useEffect(() => {
         <div className="nav-buttons">
           {currentUser && (
             <>
-              <button className="feedback-btn" onClick={onFeedbackClick}>Feedback</button>
+              {/* ❌ Hide Feedback for admin */}
+              {userRole !== "admin" && (
+                <button className="feedback-btn" onClick={onFeedbackClick}>Feedback</button>
+              )}
+
               <button className="settings-btn" onClick={onSettingsClick}>Settings</button>
               <button onClick={handleLogout} className="logout-btn">Logout</button>
             </>
           )}
         </div>
+
 
       </div>
     </nav>
