@@ -67,7 +67,6 @@ React.useEffect(() => {
                 <li className="nav-item"><Link to="/admin" className="nav-link">Admin Dashboard</Link></li>
                 <li className="nav-item"><Link to="/admin/users" className="nav-link">Users</Link></li>
                 <li className="nav-item"><Link to="/admin/therapists" className="nav-link">Therapists</Link></li>
-                <li className="nav-item"><Link to="/admin/analytics" className="nav-link">Analytics</Link></li>
               </>
             )}
 

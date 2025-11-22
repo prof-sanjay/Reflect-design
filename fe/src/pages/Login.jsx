@@ -45,7 +45,7 @@ const Login = () => {
       } else if (user.role === "therapist") {
         navigate("/therapist/profile");
       } else {
-        navigate("/dashboard");  
+        navigate("/dashboard");   
       }
 
     } catch (err) {

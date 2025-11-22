@@ -16,7 +16,6 @@ import "../styles/AdminDashboard.css";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("analytics");
-  const [users, setUsers] = useState([]);
   const [prompts, setPrompts] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [analytics, setAnalytics] = useState(null);
@@ -119,12 +118,6 @@ const AdminDashboard = () => {
           onClick={() => setActiveTab("analytics")}
         >
           Analytics
-        </button>
-        <button
-          className={activeTab === "users" ? "active" : ""}
-          onClick={() => setActiveTab("users")}
-        >
-          Users
         </button>
         <button
           className={activeTab === "prompts" ? "active" : ""}

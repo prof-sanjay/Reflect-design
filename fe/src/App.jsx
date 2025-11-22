@@ -13,6 +13,8 @@ import Reflection from './pages/ReflectionPage';
 import UserProfile from './pages/UserProfile';
 import TherapistProfile from './pages/TherapistProfile';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminUsers from './pages/AdminUsers';
+import AdminTherapistManagement from './pages/AdminTherapistManagement';
 import TherapistBooking from './pages/TherapistBooking';
 
 import ImprovedGoals from './components/ImprovedGoals';
@@ -75,6 +77,8 @@ function App() {
 
             {/* ADMIN */}
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path='/admin/users' element={<AdminUsers/>} />
+            <Route path='/admin/therapists' element={<AdminTherapistManagement/>}/>
           </Routes>
         </div>
       </AuthProvider>
